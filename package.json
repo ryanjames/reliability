@@ -1,0 +1,27 @@
+{
+  "name": "@reliability/frontend-interview-challenge",
+  "version": "1.0.0",
+  "description": "Takeaway challenge for Reliability applicants",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reliability-center/frontend-interview-challenge.git"
+  },
+  "keywords": [],
+  "author": "Reliability Engineering",
+  "contributors": [
+    {
+      "name": "Joey Figaro",
+      "email": "joey@reliability.com",
+      "url": "https://github.com/joeyfigaro"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/reliability-center/frontend-interview-challenge/issues"
+  },
+  "homepage": "https://github.com/reliability-center/frontend-interview-challenge#readme"
+}
