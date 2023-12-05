@@ -2,7 +2,7 @@
 
 ## Frontend Interview Challenge
 
-Develop an application that supports creating, deleting, and listing TODOs. When creating TODOs, the UI should update immediately. Pending network requests should be communicated with some kind of indicator. Using something like [`JSON Server`](https://github.com/typicode/json-server) is acceptable. At the very least you should have typings defined for your `Todo` objects–typing responses/requests/errors will earn extra points.
+Develop an application that supports creating, deleting, and listing todos. When submmitting a new todo, the UI should update immediately. Pending network requests should be communicated with some kind of indicator. Using something like [`JSON Server`](https://github.com/typicode/json-server) is acceptable. At the very least you should have typings defined for your `Todo` objects–typing responses/requests/errors will earn extra points.
 
 ---
 
