@@ -29,3 +29,4 @@ Develop an application that supports creating, deleting, and listing TODOs. When
 - [ ] Persist database to disk (any db acceptable, including SQLite/LowDB)
 - [ ] Support setting and changing priority for todos
 - [ ] Implement crosstab state updates/communication
+- [ ] Use [`Radix`](https://www.radix-ui.com/primitives) and/or [HeadlessUI](https://headlessui.com/) with [`Tailwind`](https://tailwindcss.com/) to create and style a component kit
