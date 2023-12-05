@@ -4,6 +4,8 @@
 
 Develop an application that supports creating, deleting, and listing todos. When submmitting a new todo, the UI should update immediately. Pending network requests should be communicated with some kind of indicator. Using something like [`JSON Server`](https://github.com/typicode/json-server) is acceptable. At the very least you should have typings defined for your `Todo` objects–typing responses/requests/errors will earn extra points.
 
+Fork the repository to begin and open a PR against it when you're ready for us to review your work. :muscle:
+
 ---
 
 
