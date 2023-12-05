@@ -1,6 +1,6 @@
 ![Reliability](https://ci3.googleusercontent.com/mail-sig/AIorK4w4c_zsr75LEdCxUrJHgFgm9CEZgjlKQIGvu1eVKeIjkRZ3_B_eki8iCQEVee9WxbmB9clrqoU)
 
-## Frontend Takeaway Challenge
+## Frontend Interview Challenge
 
 Develop an application that supports creating, deleting, and listing TODOs. When creating TODOs, the UI should update immediately. Pending network requests should be communicated with some kind of indicator. Using something like [`JSON Server`](https://github.com/typicode/json-server) is acceptable.
 
