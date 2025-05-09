@@ -25,7 +25,6 @@ Create your own repository using this template to begin and assign the Reliabili
 - Tailwind
 
 ## Extra Credit
-- [ ] Use [Ariakit](https://ariakit.org/) or [Radix](https://www.radix-ui.com/primitives) to build out your components
 - [ ] [Zustand](https://github.com/pmndrs/zustand) or [Valtio](https://github.com/pmndrs/valtio) (if global application state is appropriate)
 - [ ] Implement a backend using language/framework of your choosing
 - [ ] Support undo for editing and deleting
@@ -33,4 +32,4 @@ Create your own repository using this template to begin and assign the Reliabili
 - [ ] Persist database to disk (any db acceptable, including SQLite/LowDB)
 - [ ] Support setting and changing priority for todos
 - [ ] Implement crosstab state updates/communication
-- [ ] Use [Radix](https://www.radix-ui.com/primitives) and/or [HeadlessUI](https://headlessui.com/) with [Tailwind](https://tailwindcss.com/) to create and style a component kit
+- [ ] Use [Ariakit](https://ariakit.org/), [Radix](https://www.radix-ui.com/primitives), and/or [HeadlessUI](https://headlessui.com/) with [Tailwind](https://tailwindcss.com/) to create and style a component kit
