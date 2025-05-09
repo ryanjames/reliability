@@ -22,9 +22,11 @@ Create your own repository using this template to begin and assign the Reliabili
 - React
 - Typescript
 - [Tanstack Query](https://tanstack.com/query/latest)
-- [Zustand](https://github.com/pmndrs/zustand) or [Valtio](https://github.com/pmndrs/valtio) if global application state is appropriate
+- Tailwind
 
 ## Extra Credit
+- [ ] Use [Ariakit](https://ariakit.org/) or [Radix](https://www.radix-ui.com/primitives) to build out your components
+- [ ] [Zustand](https://github.com/pmndrs/zustand) or [Valtio](https://github.com/pmndrs/valtio) (if global application state is appropriate)
 - [ ] Implement a backend using language/framework of your choosing
 - [ ] Support undo for editing and deleting
 - [ ] Persist data to the client
