@@ -12,7 +12,9 @@
   "tailwindCSS.includeLanguages": {
     "typescriptreact": "html"
   },
-  "tailwindCSS.config": "./tailwind.config.js",
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ],
   "editor.formatOnSave": true,
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
