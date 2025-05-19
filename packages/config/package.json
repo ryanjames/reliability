@@ -1,0 +1,14 @@
+{
+  "name": "@reliability/reliability-config",
+  "version": "1.0.0",
+  "description": "Reliabiliy Config",
+  "author": "Reliability Engineering",
+  "contributors": [
+    {
+      "name": "Ryan james",
+      "email": "ryan@ryanjam.es",
+      "url": "https://ryanjam.es"
+    }
+  ],
+  "license": "MIT"
+}
