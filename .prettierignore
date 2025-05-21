@@ -1,0 +1,10 @@
+node_modules
+dist
+build
+coverage
+*.lock
+*.png
+*.jpg
+*.svg
+*.snap
+pnpm-lock.yaml
