@@ -1,6 +1,6 @@
 {
   "name": "reliability",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Reliabiliy Monorepo",
   "author": "Reliability Engineering",
   "contributors": [
@@ -10,6 +10,7 @@
       "url": "https://ryanjam.es"
     }
   ],
+  "_comment": "R.J.: Tailwind added here for IntelliSense in monorepo setup.",
   "license": "MIT",
   "devDependencies": {
     "tailwindcss": "^4.1.7"
