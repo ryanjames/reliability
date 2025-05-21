@@ -10,5 +10,11 @@
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "eslint": {
+    "experimental": {
+      "useFlatConfig": true
+    },
+    "workingDirectories": ["./packages/project-a", "./packages/project-b"]
+  }
 }

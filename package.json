@@ -11,8 +11,18 @@
     }
   ],
   "_comment": "R.J.: Tailwind added here for IntelliSense in monorepo setup.",
+  "type": "module",
   "license": "MIT",
+  "scripts": {
+    "lint": "eslint . "
+  },
   "devDependencies": {
-    "tailwindcss": "^4.1.7"
+    "@eslint/js": "^9.25.0",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "tailwindcss": "^4.1.7",
+    "typescript-eslint": "^8.30.1"
   }
 }
