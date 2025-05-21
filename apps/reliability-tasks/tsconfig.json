@@ -8,8 +8,12 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "baseUrl": "."
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
   "include": ["src"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["node_modules"]
 }

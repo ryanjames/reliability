@@ -1,10 +1,5 @@
 {
   "css.validate": false,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "eslint.validate": ["typescript", "typescriptreact"],
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always"
-  },
   "editor.wordWrap": "on",
   "editor.quickSuggestions": {
     "strings": true
@@ -15,8 +10,5 @@
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
-  "editor.formatOnSave": true,
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  "editor.formatOnSave": true
 }

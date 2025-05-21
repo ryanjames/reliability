@@ -1,7 +1,7 @@
 {
-  "name": "reliability",
+  "name": "@reliability/reliability-ui",
   "version": "1.0.0",
-  "description": "Reliabiliy Monorepo",
+  "description": "Reliabiliy UI",
   "author": "Reliability Engineering",
   "contributors": [
     {
@@ -12,6 +12,10 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "tailwindcss": "^4.1.7"
+    "eslint": "^9.0.0",
+    "@eslint/js": "^9.0.0",
+    "typescript-eslint": "^7.0.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0"
   }
 }

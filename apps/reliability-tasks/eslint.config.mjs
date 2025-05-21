@@ -1,11 +1,8 @@
-// eslint.config.js
 import { defineConfig } from "eslint/config";
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
-import reactPlugin from "eslint-plugin-react";
-import reactHooksPlugin from "eslint-plugin-react-hooks";
-import tailwindcss from "eslint-plugin-tailwindcss";
-import prettier from "eslint-config-prettier";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
 
 export default defineConfig([
   js.configs.recommended,
@@ -13,29 +10,25 @@ export default defineConfig([
   ...tseslint.configs.recommendedTypeChecked,
   {
     files: ["**/*.ts", "**/*.tsx"],
+    ignores: ["dist", "node_modules"],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
         project: "./tsconfig.json",
+        tsconfigRootDir: new URL(".", import.meta.url),
         sourceType: "module",
       },
     },
     plugins: {
       "@typescript-eslint": tseslint.plugin,
-      react: reactPlugin,
-      "react-hooks": reactHooksPlugin,
-      tailwindcss,
+      react,
+      "react-hooks": reactHooks,
     },
     rules: {
-      // Optional: Add rules similar to your old config
       "react/react-in-jsx-scope": "off",
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
       "tailwindcss/classnames-order": "warn",
-    },
-  },
-  // Global Prettier overrides
-  {
-    rules: {
-      ...prettier.rules,
     },
   },
 ]);
