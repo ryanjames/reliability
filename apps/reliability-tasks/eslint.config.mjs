@@ -3,6 +3,7 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
+import tailwindcss from "eslint-plugin-tailwindcss";
 
 export default defineConfig([
   js.configs.recommended,
@@ -23,6 +24,7 @@ export default defineConfig([
       "@typescript-eslint": tseslint.plugin,
       react,
       "react-hooks": reactHooks,
+      tailwindcss,
     },
     rules: {
       "react/react-in-jsx-scope": "off",
