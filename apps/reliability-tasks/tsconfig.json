@@ -1,10 +1,12 @@
 {
   "files": [],
+  "composite": true,
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@reliability-ui": ["../../packages/reliability-ui/src"]
     }
-  }
+  },
+  "include": ["server/**/*.ts", "server/types/**/*.d.ts"]
 }

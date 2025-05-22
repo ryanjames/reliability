@@ -10,4 +10,9 @@ export default defineConfig({
       '@reliability-ui': path.resolve(__dirname, '../../packages/reliability-ui/src'),
     },
   },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:8787',
+    },
+  },
 });
