@@ -21,7 +21,13 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Reliability UI */
+    "baseUrl": ".",
+    "paths": {
+      "@reliability-ui": ["../../packages/reliability-ui/src"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "tailwind.config.ts"]
 }
