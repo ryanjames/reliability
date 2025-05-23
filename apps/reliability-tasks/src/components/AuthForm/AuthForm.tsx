@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@hooks/useAuth';
 import { useAuthStore } from '@store/useAuthStore';
+import { toast } from 'sonner';
 
 export default function AuthForm() {
   const [step, setStep] = useState<'email' | 'login' | 'register'>('email');
@@ -27,12 +28,16 @@ export default function AuthForm() {
       } else if (step === 'login') {
         const result = await login.mutateAsync(password);
         loginToStore(result.userId);
+        toast.success(`Logged in as ${result.name} (${result.email})`);
       } else if (step === 'register') {
         const result = await register.mutateAsync({ name, password });
         loginToStore(result.userId);
+        toast.success(`Registered and logged in as ${result.name} (${result.email})`);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      toast.error(message);
+      setError(message);
     }
   };
 
