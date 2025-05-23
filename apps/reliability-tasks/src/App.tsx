@@ -3,9 +3,12 @@ import AuthForm from './components/AuthForm';
 import { useAuthStore } from '@store/useAuthStore';
 import { useTasks } from '@hooks/useTasks';
 import { useAddTask } from '@hooks/useAddTask';
+import { useUpdateTask } from '@hooks/useUpdateTask';
 import { Dialog } from '@reliability-ui';
 import { useDeleteTask } from '@hooks/useDeleteTask';
+import TaskForm from './components/TaskForm';
 import { toast } from 'sonner';
+import type { TTask } from '@types';
 
 export default function App() {
   const user = useAuthStore(state => state.user);
@@ -14,14 +17,12 @@ export default function App() {
   const { data: tasks, isLoading, error } = useTasks();
 
   const [adding, setAdding] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<1 | 2 | 3>(1);
-  const [dueDate, setDueDate] = useState('');
+  const [editingTask, setEditingTask] = useState<TTask | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
 
   const addTask = useAddTask();
+  const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
 
   const handleLogout = () => {
@@ -41,21 +42,27 @@ export default function App() {
     }
   };
 
-  const handleAdd = () => {
+  const handleSubmitTask = (data: Partial<TTask>) => {
     if (!user) return;
-    addTask.mutate({
-      title,
-      description,
-      priority,
-      due_date: dueDate ? new Date(dueDate).getTime() : null,
-      project_id: 1,
+
+    const payload = {
+      ...data,
       user_id: user.id,
-    });
-    setTitle('');
-    setDescription('');
-    setPriority(1);
-    setDueDate('');
+      project_id: 1,
+    };
+
+    if (editingTask?.id) {
+      updateTask.mutate({ id: editingTask.id, ...payload });
+      setEditingTask(null);
+    } else {
+      addTask.mutate(payload);
+      setAdding(false);
+    }
+  };
+
+  const handleCancel = () => {
     setAdding(false);
+    setEditingTask(null);
   };
 
   return (
@@ -78,18 +85,40 @@ export default function App() {
             <>
               <ul className="space-y-3">
                 {tasks.map(task => (
-                  <li key={task.id} className="flex justify-between items-start border-b pb-2">
-                    <div>
-                      <div className="font-semibold">{task.title}</div>
-                      <div className="text-sm text-gray-600">{task.description}</div>
-                      <div className="text-xs text-gray-500">
-                        Priority: {task.priority} | Due:{' '}
-                        {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'None'}
+                  <li key={task.id} className="border-b pb-2">
+                    {editingTask?.id === task.id ? (
+                      <TaskForm
+                        initialTask={task}
+                        onSubmit={handleSubmitTask}
+                        onCancel={handleCancel}
+                        submitLabel="Update Task"
+                      />
+                    ) : (
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-semibold">{task.title}</div>
+                          <div className="text-sm text-gray-600">{task.description}</div>
+                          <div className="text-xs text-gray-500">
+                            Priority: {task.priority} | Due:{' '}
+                            {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'None'}
+                          </div>
+                        </div>
+                        <div className="space-x-2">
+                          <button
+                            onClick={() => setEditingTask(task)}
+                            className="text-sm text-blue-600"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(task.id)}
+                            className="text-sm text-red-500"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <button onClick={() => handleDelete(task.id)} className="text-sm text-red-500">
-                      Delete
-                    </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -104,43 +133,7 @@ export default function App() {
           )}
 
           {adding ? (
-            <div className="mt-6 space-y-2">
-              <input
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                placeholder="Title"
-                className="border px-3 py-2 w-full"
-              />
-              <textarea
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-                placeholder="Description"
-                className="border px-3 py-2 w-full"
-              />
-              <select
-                value={priority}
-                onChange={e => setPriority(Number(e.target.value) as 1 | 2 | 3)}
-                className="border px-3 py-2 w-full"
-              >
-                <option value={1}>High</option>
-                <option value={2}>Medium</option>
-                <option value={3}>Low</option>
-              </select>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={e => setDueDate(e.target.value)}
-                className="border px-3 py-2 w-full"
-              />
-              <div className="flex gap-2">
-                <button onClick={handleAdd} className="bg-green-600 text-white px-4 py-2 rounded">
-                  Save Task
-                </button>
-                <button onClick={() => setAdding(false)} className="bg-gray-300 px-4 py-2 rounded">
-                  Cancel
-                </button>
-              </div>
-            </div>
+            <TaskForm onSubmit={handleSubmitTask} onCancel={handleCancel} submitLabel="Save Task" />
           ) : (
             <button
               onClick={() => setAdding(true)}
