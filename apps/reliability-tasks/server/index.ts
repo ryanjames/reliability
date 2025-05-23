@@ -3,6 +3,7 @@ import { serve } from '@hono/node-server';
 import db from './db';
 import { authRoutes } from './routes/auth';
 import { taskRoutes } from './routes/tasks';
+import { projectRoutes } from './routes/projects';
 import type { TTask } from '@types';
 
 const app = new Hono();
@@ -37,6 +38,7 @@ app.route('/api', authRoutes);
 app.notFound(c => c.json({ error: 'Not found' }, 404));
 
 app.route('/api', taskRoutes);
+app.route('/api', projectRoutes);
 
 serve({ fetch: app.fetch, port: 8787 });
 

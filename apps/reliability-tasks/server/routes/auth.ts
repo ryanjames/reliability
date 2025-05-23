@@ -37,23 +37,29 @@ authRoutes.post('/auth/register', async c => {
     return c.json({ error: 'User already exists' }, 400);
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hash = await bcrypt.hash(password, 10);
 
-  const insert = db.prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
-  insert.bind([name, email, hashedPassword]);
-  insert.step();
-  insert.free();
+  const stmt = db.prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
+  stmt.bind([name, email, hash]);
+  stmt.step();
+  stmt.free();
+
+  // Get the new user's ID
+  const idStmt = db.prepare('SELECT id FROM users WHERE email = ?');
+  idStmt.bind([email]);
+  idStmt.step();
+  const [userId] = idStmt.get() as [number];
+  idStmt.free();
+
+  // Create "Inbox" project for this user
+  const inboxStmt = db.prepare('INSERT INTO projects (user_id, title, is_inbox) VALUES (?, ?, 1)');
+  inboxStmt.bind([userId, 'Inbox']);
+  inboxStmt.step();
+  inboxStmt.free();
 
   persistDb();
 
-  // Fetch full user record for return
-  const userStmt = db.prepare('SELECT id, name, email FROM users WHERE email = ?');
-  userStmt.bind([email]);
-  userStmt.step();
-  const [id, userName, userEmail] = userStmt.get() as [number, string, string];
-  userStmt.free();
-
-  return c.json({ success: true, userId: id, name: userName, email: userEmail });
+  return c.json({ success: true, userId, name, email });
 });
 
 /**

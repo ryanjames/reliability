@@ -34,10 +34,11 @@ const schema: Record<string, { createSQL: string; columns: string[] }> = {
         id INTEGER PRIMARY KEY,
         user_id INTEGER NOT NULL,
         title TEXT NOT NULL,
+        is_inbox INTEGER DEFAULT 0,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
     `,
-    columns: ['id', 'user_id', 'title'],
+    columns: ['id', 'user_id', 'title', 'is_inbox'],
   },
   tasks: {
     createSQL: `
@@ -49,7 +50,7 @@ const schema: Record<string, { createSQL: string; columns: string[] }> = {
         description TEXT,
         priority INTEGER NOT NULL CHECK (priority BETWEEN 1 AND 3),
         due_date INTEGER,
-        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
     `,
@@ -99,6 +100,28 @@ for (const [table, { createSQL, columns }] of Object.entries(schema)) {
   }
 
   db.run(`DROP TABLE ${temp};`);
+}
+
+// Ensure each user has one Inbox project
+try {
+  const userRes = db.exec(`SELECT id FROM users;`);
+  const userIds: number[] = (userRes[0]?.values || []).map(row => row[0]) as number[];
+
+  for (const userId of userIds) {
+    const check = db.prepare(`SELECT 1 FROM projects WHERE user_id = ? AND is_inbox = 1`);
+    check.bind([userId]);
+    const exists = check.step();
+    check.free();
+
+    if (!exists) {
+      const insert = db.prepare(`INSERT INTO projects (user_id, title, is_inbox) VALUES (?, ?, 1)`);
+      insert.bind([userId, 'Inbox']);
+      insert.step();
+      insert.free();
+    }
+  }
+} catch (err) {
+  console.error('💥 Error creating Inbox projects:', err);
 }
 
 const data = db.export();

@@ -9,6 +9,7 @@ import { useDeleteTask } from '@hooks/useDeleteTask';
 import TaskForm from './components/TaskForm';
 import { toast } from 'sonner';
 import type { TTask } from '@types';
+import Projects from './components/Projects/Projects';
 
 export default function App() {
   const user = useAuthStore(state => state.user);
@@ -18,7 +19,7 @@ export default function App() {
 
   const [adding, setAdding] = useState(false);
   const [editingTask, setEditingTask] = useState<TTask | null>(null);
-  const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
+  const [taskToDelete, setTaskToDelete] = useState<TTask | null>(null);
   const [open, setOpen] = useState(false);
 
   const addTask = useAddTask();
@@ -30,14 +31,14 @@ export default function App() {
     logout();
   };
 
-  const handleDelete = (id: number) => {
-    setTaskToDelete(id);
+  const handleDelete = (task: TTask) => {
+    setTaskToDelete(task);
     setOpen(true);
   };
 
   const confirm = () => {
-    if (taskToDelete !== null) {
-      deleteTask.mutate({ id: taskToDelete });
+    if (taskToDelete) {
+      deleteTask.mutate({ id: taskToDelete.id });
       setTaskToDelete(null);
     }
   };
@@ -111,7 +112,7 @@ export default function App() {
                             Edit
                           </button>
                           <button
-                            onClick={() => handleDelete(task.id)}
+                            onClick={() => handleDelete(task)}
                             className="text-sm text-red-500"
                           >
                             Delete
@@ -126,7 +127,7 @@ export default function App() {
                 open={open}
                 onOpenChange={setOpen}
                 onConfirm={confirm}
-                title="Delete Task?"
+                title={`Delete ${taskToDelete?.title}?`}
                 description="This task will be permanently removed."
               />
             </>
@@ -144,6 +145,7 @@ export default function App() {
           )}
         </>
       )}
+      <Projects />
     </main>
   );
 }
