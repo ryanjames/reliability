@@ -11,6 +11,7 @@ export default function AuthForm() {
   const [error, setError] = useState<string | null>(null);
 
   const passwordRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
   const loginToStore = useAuthStore(state => state.login);
 
   const { checkEmail, login, register } = useAuth(email);
@@ -42,8 +43,10 @@ export default function AuthForm() {
   };
 
   useEffect(() => {
-    if ((step === 'login' || step === 'register') && passwordRef.current) {
+    if (step === 'login' && passwordRef.current) {
       passwordRef.current.focus();
+    } else if (step === 'register' && nameRef.current) {
+      nameRef.current.focus();
     }
   }, [step]);
 
@@ -65,6 +68,7 @@ export default function AuthForm() {
 
       {step === 'register' && (
         <input
+          ref={nameRef}
           type="text"
           placeholder="Name"
           required

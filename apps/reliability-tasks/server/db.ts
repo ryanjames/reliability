@@ -44,14 +44,16 @@ const schema: Record<string, { createSQL: string; columns: string[] }> = {
       CREATE TABLE tasks (
         id INTEGER PRIMARY KEY,
         project_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
         title TEXT NOT NULL,
         description TEXT,
         priority INTEGER NOT NULL CHECK (priority BETWEEN 1 AND 3),
         due_date INTEGER,
         FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
     `,
-    columns: ['id', 'project_id', 'title', 'description', 'priority', 'due_date'],
+    columns: ['id', 'project_id', 'user_id', 'title', 'description', 'priority', 'due_date'],
   },
 };
 
