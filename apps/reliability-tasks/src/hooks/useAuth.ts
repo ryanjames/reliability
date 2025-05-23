@@ -27,7 +27,11 @@ export function useAuth(email: string) {
       return res.json();
     },
     onSuccess: data => {
-      queryClient.setQueryData(['auth', 'user'], { id: data.userId, email });
+      queryClient.setQueryData(['auth', 'user'], {
+        id: data.userId,
+        name: data.name,
+        email,
+      });
     },
   });
 
@@ -42,7 +46,11 @@ export function useAuth(email: string) {
       return res.json();
     },
     onSuccess: data => {
-      queryClient.setQueryData(['auth', 'user'], { id: data.userId, email });
+      queryClient.setQueryData(['auth', 'user'], {
+        id: data.userId,
+        name: data.name,
+        email,
+      });
     },
   });
 

@@ -27,11 +27,11 @@ export default function AuthForm() {
         setStep(exists ? 'login' : 'register');
       } else if (step === 'login') {
         const result = await login.mutateAsync(password);
-        loginToStore(result.userId);
+        loginToStore({ id: result.userId, name: result.name, email: result.email });
         toast.success(`Logged in as ${result.name} (${result.email})`);
       } else if (step === 'register') {
         const result = await register.mutateAsync({ name, password });
-        loginToStore(result.userId);
+        loginToStore({ id: result.userId, name: result.name, email: result.email });
         toast.success(`Registered and logged in as ${result.name} (${result.email})`);
       }
     } catch (err: unknown) {

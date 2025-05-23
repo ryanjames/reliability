@@ -2,22 +2,30 @@ import AuthForm from './components/AuthForm';
 import { useAuthStore } from '@store/useAuthStore';
 import { useTasks } from '@hooks/useTasks';
 import type { TTask } from '@types';
+import { toast } from 'sonner';
 
 export default function App() {
-  const userId = useAuthStore(state => state.userId);
+  const user = useAuthStore(state => state.user);
   const logout = useAuthStore(state => state.logout);
 
   const { data: tasks, isLoading, error } = useTasks();
 
+  const handleLogout = () => {
+    if (user) {
+      toast(`Logged out ${user.name} (${user.email})`);
+    }
+    logout();
+  };
+
   return (
     <main className="p-8">
-      {!userId ? (
+      {!user ? (
         <AuthForm />
       ) : (
         <>
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">Tasks</h1>
-            <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">
+            <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1 rounded">
               Log out
             </button>
           </div>
