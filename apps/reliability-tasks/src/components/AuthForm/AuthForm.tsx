@@ -1,21 +1,20 @@
-// AuthForm.tsx
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@hooks/useAuth';
+import { useAuthStore } from '@store/useAuthStore';
 
 export default function AuthForm() {
   const [step, setStep] = useState<'email' | 'login' | 'register'>('email');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const loginToStore = useAuthStore(state => state.login);
 
   const { checkEmail, login, register } = useAuth(email);
 
-  const resetFeedback = () => {
-    setError(null);
-    setMessage(null);
-  };
+  const resetFeedback = () => setError(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,19 +26,21 @@ export default function AuthForm() {
         setStep(exists ? 'login' : 'register');
       } else if (step === 'login') {
         const result = await login.mutateAsync(password);
-        setMessage(`Logged in as user ${result.userId}`);
+        loginToStore(result.userId);
       } else if (step === 'register') {
         const result = await register.mutateAsync({ name, password });
-        setMessage(`Registered and logged in as user ${result.userId}`);
+        loginToStore(result.userId);
       }
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Something went wrong');
-      }
+      setError(err instanceof Error ? err.message : 'Something went wrong');
     }
   };
+
+  useEffect(() => {
+    if ((step === 'login' || step === 'register') && passwordRef.current) {
+      passwordRef.current.focus();
+    }
+  }, [step]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
@@ -70,6 +71,7 @@ export default function AuthForm() {
 
       {step !== 'email' && (
         <input
+          ref={passwordRef}
           type="password"
           placeholder="Password"
           required
@@ -88,7 +90,6 @@ export default function AuthForm() {
       </button>
 
       {error && <div className="text-red-600">{error}</div>}
-      {message && <div className="text-green-700">{message}</div>}
     </form>
   );
 }

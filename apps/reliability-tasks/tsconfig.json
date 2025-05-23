@@ -5,8 +5,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@reliability-ui": ["../../packages/reliability-ui/src"],
       "@hooks/*": ["src/hooks/*"],
+      "@reliability-ui": ["../../packages/reliability-ui/src"],
+      "@store/*": ["src/store/*"],
       "@types": ["types"],
       "@types/*": ["types/*"]
     }

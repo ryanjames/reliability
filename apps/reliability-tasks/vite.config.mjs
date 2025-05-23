@@ -7,8 +7,9 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@reliability-ui': path.resolve(__dirname, '../../packages/reliability-ui/src'),
       '@hooks': path.resolve(__dirname, './src/hooks'),
+      '@reliability-ui': path.resolve(__dirname, '../../packages/reliability-ui/src'),
+      '@store': path.resolve(__dirname, 'src/store'),
       '@types': path.resolve(__dirname, './types'),
     },
   },
