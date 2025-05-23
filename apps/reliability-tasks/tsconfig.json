@@ -5,8 +5,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@reliability-ui": ["../../packages/reliability-ui/src"]
+      "@reliability-ui": ["../../packages/reliability-ui/src"],
+      "@hooks/*": ["src/hooks/*"],
+      "@types": ["types"],
+      "@types/*": ["types/*"]
     }
   },
-  "include": ["server/**/*.ts", "server/types/**/*.d.ts"]
+  "include": ["src", "server", "types"]
 }

@@ -12,7 +12,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@types": ["types"],
+      "@types/*": ["types/*"]
+    }
   },
-  "include": ["server/**/*.ts", "server/types/**/*.d.ts", "vite.config.mjs"]
+  "include": ["server/**/*.ts", "types/**/*.ts", "vite.config.mjs"]
 }

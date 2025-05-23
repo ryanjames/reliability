@@ -8,6 +8,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@reliability-ui': path.resolve(__dirname, '../../packages/reliability-ui/src'),
+      '@hooks': path.resolve(__dirname, './src/hooks'),
+      '@types': path.resolve(__dirname, './types'),
     },
   },
   server: {

@@ -1,24 +1,22 @@
-import { Theme } from '@radix-ui/themes';
-import { useEffect } from 'react';
-import { Button } from '@reliability-ui';
+import { useTasks } from '@hooks/useTasks';
+import AuthForm from './components/AuthForm';
+import type { TTask } from '@types';
 
-function App() {
-  useEffect(() => {
-    fetch('/api/tasks')
-      .then(res => res.json())
-      .then(console.log);
-  }, []);
+export default function App() {
+  const { data: tasks, error, isLoading } = useTasks();
 
   return (
-    <>
-      <Theme>
-        <div className="bg-blue-600 flex items-center justify-center">Test</div>
-        <Button intent="primary" size="lg">
-          Primary Button
-        </Button>
-      </Theme>
-    </>
+    <main className="p-8">
+      <AuthForm />
+      {isLoading && <p>Loading tasks...</p>}
+      {error && <p className="text-red-600">{(error as Error).message}</p>}
+      {tasks && (
+        <ul className="mt-4 list-disc pl-5">
+          {tasks.map((task: TTask) => (
+            <li key={task.id}>{task.title}</li>
+          ))}
+        </ul>
+      )}
+    </main>
   );
 }
-
-export default App;

@@ -25,8 +25,11 @@
     /* Reliability UI */
     "baseUrl": ".",
     "paths": {
-      "@reliability-ui": ["../../packages/reliability-ui/src"]
+      "@reliability-ui": ["../../packages/reliability-ui/src"],
+      "@hooks/*": ["src/hooks/*"],
+      "@types": ["types"],
+      "@types/*": ["types/*"]
     }
   },
-  "include": ["src", "tailwind.config.ts", "../../packages/reliability-ui/src"]
+  "include": ["src", "types", "tailwind.config.ts", "../../packages/reliability-ui/src"]
 }
