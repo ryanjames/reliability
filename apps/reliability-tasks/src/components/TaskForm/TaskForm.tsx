@@ -1,11 +1,13 @@
+// TaskForm.tsx
 import { useState, useEffect } from 'react';
-import type { TTask } from '@types';
+import type { TTask, TProject } from '@types';
 
 interface TaskFormProps {
   initialTask?: Partial<TTask>;
   onSubmit: (task: Partial<TTask>) => void;
   submitLabel?: string;
   onCancel?: () => void;
+  projects: TProject[];
 }
 
 export default function TaskForm({
@@ -13,6 +15,7 @@ export default function TaskForm({
   onSubmit,
   submitLabel = 'Save',
   onCancel,
+  projects,
 }: TaskFormProps) {
   const [title, setTitle] = useState(initialTask?.title ?? '');
   const [description, setDescription] = useState(initialTask?.description ?? '');
@@ -20,15 +23,17 @@ export default function TaskForm({
   const [dueDate, setDueDate] = useState(
     initialTask?.due_date ? new Date(initialTask.due_date).toISOString().split('T')[0] : '',
   );
+  const [projectId, setProjectId] = useState(initialTask?.project_id ?? 1);
 
   useEffect(() => {
-    if (!initialTask?.id) return; // Only reinitialize if editing an existing task
+    if (!initialTask?.id) return;
     setTitle(initialTask.title ?? '');
     setDescription(initialTask.description ?? '');
     setPriority(initialTask.priority ?? 1);
     setDueDate(
       initialTask.due_date ? new Date(initialTask.due_date).toISOString().split('T')[0] : '',
     );
+    setProjectId(initialTask.project_id ?? 1);
   }, [initialTask]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,7 +42,8 @@ export default function TaskForm({
       title,
       description,
       priority,
-      due_date: dueDate ? new Date(dueDate).getTime() : undefined,
+      due_date: dueDate ? Date.parse(dueDate) : undefined,
+      project_id: projectId,
     });
   };
 
@@ -72,6 +78,17 @@ export default function TaskForm({
         onChange={e => setDueDate(e.target.value)}
         className="border px-3 py-2 w-full"
       />
+      <select
+        value={projectId}
+        onChange={e => setProjectId(Number(e.target.value))}
+        className="border px-3 py-2 w-full"
+      >
+        {projects.map(project => (
+          <option key={project.id} value={project.id}>
+            {project.title}
+          </option>
+        ))}
+      </select>
       <div className="flex gap-2">
         <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
           {submitLabel}

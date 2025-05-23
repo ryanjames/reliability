@@ -4,6 +4,7 @@ import { useAuthStore } from '@store/useAuthStore';
 import { useTasks } from '@hooks/useTasks';
 import { useAddTask } from '@hooks/useAddTask';
 import { useUpdateTask } from '@hooks/useUpdateTask';
+import { useProjects } from '@hooks/useProjects';
 import { Dialog } from '@reliability-ui';
 import { useDeleteTask } from '@hooks/useDeleteTask';
 import TaskForm from './components/TaskForm';
@@ -14,6 +15,9 @@ import Projects from './components/Projects/Projects';
 export default function App() {
   const user = useAuthStore(state => state.user);
   const logout = useAuthStore(state => state.logout);
+
+  const userId = user?.id ?? 0;
+  const { data: projects } = useProjects(userId, { enabled: !!user?.id });
 
   const { data: tasks, isLoading, error } = useTasks();
 
@@ -49,7 +53,7 @@ export default function App() {
     const payload = {
       ...data,
       user_id: user.id,
-      project_id: 1,
+      project_id: data.project_id ?? 1,
     };
 
     if (editingTask?.id) {
@@ -93,6 +97,7 @@ export default function App() {
                         onSubmit={handleSubmitTask}
                         onCancel={handleCancel}
                         submitLabel="Update Task"
+                        projects={projects ?? []}
                       />
                     ) : (
                       <div className="flex justify-between items-start">
@@ -134,7 +139,12 @@ export default function App() {
           )}
 
           {adding ? (
-            <TaskForm onSubmit={handleSubmitTask} onCancel={handleCancel} submitLabel="Save Task" />
+            <TaskForm
+              onSubmit={handleSubmitTask}
+              onCancel={handleCancel}
+              submitLabel="Update Task"
+              projects={projects ?? []}
+            />
           ) : (
             <button
               onClick={() => setAdding(true)}

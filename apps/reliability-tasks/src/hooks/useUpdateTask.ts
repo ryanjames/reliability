@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { TTask } from '@types';
 
-export const useUpdateTask = () => {
+export function useUpdateTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -18,4 +18,4 @@ export const useUpdateTask = () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
-};
+}
