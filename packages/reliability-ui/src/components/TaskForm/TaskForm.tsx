@@ -1,13 +1,26 @@
-// TaskForm.tsx
-import { useState, useEffect } from 'react';
-import type { TTask, TProject } from '@types';
+// packages/reliability-ui/src/components/TaskForm.tsx
+
+import { useEffect, useState } from 'react';
 
 interface TaskFormProps {
-  initialTask?: Partial<TTask>;
-  onSubmit: (task: Partial<TTask>) => void;
+  initialTask?: {
+    id?: number;
+    title?: string;
+    description?: string;
+    priority?: 1 | 2 | 3;
+    due_date?: number | string;
+    project_id?: number;
+  };
+  onSubmit: (task: {
+    title: string;
+    description: string;
+    priority: 1 | 2 | 3;
+    due_date?: number;
+    project_id: number;
+  }) => void;
   submitLabel?: string;
   onCancel?: () => void;
-  projects: TProject[];
+  projects: { id: number; title: string; is_inbox: number }[];
 }
 
 export default function TaskForm({
@@ -25,23 +38,19 @@ export default function TaskForm({
   );
   const [projectId, setProjectId] = useState(() => {
     if (initialTask?.project_id) return initialTask.project_id;
-
-    // Default to inbox project if available
     const inbox = projects.find(p => p.is_inbox === 1);
     return inbox?.id ?? projects[0]?.id ?? 1;
   });
 
   useEffect(() => {
     if (!initialTask?.id) return;
-
     setTitle(initialTask.title ?? '');
     setDescription(initialTask.description ?? '');
     setPriority(initialTask.priority ?? 1);
     setDueDate(
       initialTask.due_date ? new Date(initialTask.due_date).toISOString().split('T')[0] : '',
     );
-
-    setProjectId(prev => (initialTask.project_id !== undefined ? initialTask.project_id : prev));
+    setProjectId(prev => initialTask.project_id ?? prev);
   }, [initialTask]);
 
   const handleSubmit = (e: React.FormEvent) => {

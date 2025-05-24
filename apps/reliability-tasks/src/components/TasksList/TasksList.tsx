@@ -10,8 +10,7 @@ import {
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import SortableTask from '../SortableTask';
-import TaskForm from '../TaskForm';
-import { Task } from '@reliability-ui';
+import { Task, TaskForm } from '@reliability-ui';
 
 interface TaskListProps {
   tasks: TTask[];
@@ -58,7 +57,10 @@ export default function TaskList({
           <SortableTask key={task.id} task={task}>
             {editingTask?.id === task.id ? (
               <TaskForm
-                initialTask={task}
+                initialTask={{
+                  ...task,
+                  due_date: task.due_date ?? undefined, // convert null to undefined
+                }}
                 onSubmit={onSubmitTask}
                 onCancel={() => onEditTask(null)}
                 submitLabel="Update Task"

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import AuthForm from './components/AuthForm';
 import { useTasks } from '@hooks/useTasks';
 import { Dialog } from '@reliability-ui';
-import TaskForm from './components/TaskForm';
+import { TaskForm } from '@reliability-ui';
 import { useSession } from '@hooks/useSession';
 import { useProjectSelection } from '@hooks/useProjectSelection';
 import { useTaskHandlers } from '@hooks/useTaskHandlers';
