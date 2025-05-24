@@ -8,7 +8,11 @@ import { Dialog } from '@reliability-ui';
 import type { TProject } from '@types';
 import { toast } from 'sonner';
 
-const Projects = () => {
+interface ProjectsProps {
+  onSelectProject: (id: number) => void;
+  selectedProjectId: number | null;
+}
+const Projects = ({ onSelectProject, selectedProjectId }: ProjectsProps) => {
   const user = useAuthStore(state => state.user);
   const userId = user?.id;
   const enabled = !!userId;
@@ -110,8 +114,15 @@ const Projects = () => {
                 </>
               ) : (
                 <>
-                  <span>
-                    {project.title} {project.is_inbox}{' '}
+                  <span
+                    onClick={() => onSelectProject(project.id)}
+                    className={`cursor-pointer px-2 py-1 rounded ${
+                      selectedProjectId === project.id
+                        ? 'bg-blue-100 text-blue-800 font-semibold'
+                        : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    {project.title}
                   </span>
                   {project.is_inbox == 0 && (
                     <div className="space-x-2">

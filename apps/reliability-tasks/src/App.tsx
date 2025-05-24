@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import AuthForm from './components/AuthForm';
 import { useAuthStore } from '@store/useAuthStore';
 import { useTasks } from '@hooks/useTasks';
@@ -24,11 +24,17 @@ export default function App() {
   const [adding, setAdding] = useState(false);
   const [editingTask, setEditingTask] = useState<TTask | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<TTask | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
+
   const [open, setOpen] = useState(false);
 
   const addTask = useAddTask();
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
+
+  const inboxProjectId = useMemo(() => {
+    return projects?.find(p => p.user_id === user?.id && p.is_inbox === 1)?.id ?? null;
+  }, [projects, user?.id]);
 
   const handleLogout = () => {
     if (user) toast(`Logged out ${user.name} (${user.email})`);
@@ -48,12 +54,12 @@ export default function App() {
   };
 
   const handleSubmitTask = (data: Partial<TTask>) => {
-    if (!user) return;
+    if (!user || selectedProjectId == null) return;
 
     const payload = {
       ...data,
       user_id: user.id,
-      project_id: data.project_id ?? 1,
+      project_id: data.project_id ?? inboxProjectId ?? selectedProjectId,
     };
 
     if (editingTask?.id) {
@@ -70,92 +76,100 @@ export default function App() {
     setEditingTask(null);
   };
 
+  useEffect(() => {
+    if (inboxProjectId && selectedProjectId === null) {
+      setSelectedProjectId(inboxProjectId);
+    }
+  }, [inboxProjectId, selectedProjectId]);
+
+  const filteredTasks = tasks?.filter(task => task.project_id === selectedProjectId);
+
+  if (!user) {
+    return <AuthForm />;
+  }
+
+  if (selectedProjectId === null) {
+    return <p>Loading your workspace...</p>;
+  }
+
   return (
     <main className="p-8">
-      {!user ? (
-        <AuthForm />
-      ) : (
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Tasks</h1>
+        <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1 rounded">
+          Log out
+        </button>
+      </div>
+
+      {isLoading && <p>Loading tasks...</p>}
+      {error && <p className="text-red-600">{(error as Error).message}</p>}
+
+      {filteredTasks && (
         <>
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">Tasks</h1>
-            <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1 rounded">
-              Log out
-            </button>
-          </div>
-
-          {isLoading && <p>Loading tasks...</p>}
-          {error && <p className="text-red-600">{(error as Error).message}</p>}
-
-          {tasks && (
-            <>
-              <ul className="space-y-3">
-                {tasks.map(task => (
-                  <li key={task.id} className="border-b pb-2">
-                    {editingTask?.id === task.id ? (
-                      <TaskForm
-                        initialTask={task}
-                        onSubmit={handleSubmitTask}
-                        onCancel={handleCancel}
-                        submitLabel="Update Task"
-                        projects={projects ?? []}
-                      />
-                    ) : (
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="font-semibold">{task.title}</div>
-                          <div className="text-sm text-gray-600">{task.description}</div>
-                          <div className="text-xs text-gray-500">
-                            Priority: {task.priority} | Due:{' '}
-                            {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'None'}
-                          </div>
-                        </div>
-                        <div className="space-x-2">
-                          <button
-                            onClick={() => setEditingTask(task)}
-                            className="text-sm text-blue-600"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(task)}
-                            className="text-sm text-red-500"
-                          >
-                            Delete
-                          </button>
-                        </div>
+          <ul className="space-y-3">
+            {filteredTasks.map(task => (
+              <li key={task.id} className="border-b pb-2">
+                {editingTask?.id === task.id ? (
+                  <TaskForm
+                    initialTask={task}
+                    onSubmit={handleSubmitTask}
+                    onCancel={handleCancel}
+                    submitLabel="Update Task"
+                    projects={projects ?? []}
+                  />
+                ) : (
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-semibold">{task.title}</div>
+                      <div className="text-sm text-gray-600">{task.description}</div>
+                      <div className="text-xs text-gray-500">
+                        Priority: {task.priority} | Due:{' '}
+                        {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'None'}
                       </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              <Dialog
-                open={open}
-                onOpenChange={setOpen}
-                onConfirm={confirm}
-                title={`Delete ${taskToDelete?.title}?`}
-                description="This task will be permanently removed."
-              />
-            </>
-          )}
-
-          {adding ? (
-            <TaskForm
-              onSubmit={handleSubmitTask}
-              onCancel={handleCancel}
-              submitLabel="Update Task"
-              projects={projects ?? []}
-            />
-          ) : (
-            <button
-              onClick={() => setAdding(true)}
-              className="mt-6 bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              ➕ Add task
-            </button>
-          )}
+                    </div>
+                    <div className="space-x-2">
+                      <button
+                        onClick={() => setEditingTask(task)}
+                        className="text-sm text-blue-600"
+                      >
+                        Edit
+                      </button>
+                      <button onClick={() => handleDelete(task)} className="text-sm text-red-500">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+          <Dialog
+            open={open}
+            onOpenChange={setOpen}
+            onConfirm={confirm}
+            title={`Delete ${taskToDelete?.title}?`}
+            description="This task will be permanently removed."
+          />
         </>
       )}
-      <Projects />
+
+      {adding ? (
+        <TaskForm
+          initialTask={{ project_id: selectedProjectId ?? inboxProjectId ?? undefined }}
+          onSubmit={handleSubmitTask}
+          onCancel={handleCancel}
+          submitLabel="Save Task"
+          projects={projects ?? []}
+        />
+      ) : (
+        <button
+          onClick={() => setAdding(true)}
+          className="mt-6 bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          ➕ Add task
+        </button>
+      )}
+      <Projects onSelectProject={setSelectedProjectId} selectedProjectId={selectedProjectId} />
     </main>
   );
 }

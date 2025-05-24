@@ -23,17 +23,25 @@ export default function TaskForm({
   const [dueDate, setDueDate] = useState(
     initialTask?.due_date ? new Date(initialTask.due_date).toISOString().split('T')[0] : '',
   );
-  const [projectId, setProjectId] = useState(initialTask?.project_id ?? 1);
+  const [projectId, setProjectId] = useState(() => {
+    if (initialTask?.project_id) return initialTask.project_id;
+
+    // Default to inbox project if available
+    const inbox = projects.find(p => p.is_inbox === 1);
+    return inbox?.id ?? projects[0]?.id ?? 1;
+  });
 
   useEffect(() => {
     if (!initialTask?.id) return;
+
     setTitle(initialTask.title ?? '');
     setDescription(initialTask.description ?? '');
     setPriority(initialTask.priority ?? 1);
     setDueDate(
       initialTask.due_date ? new Date(initialTask.due_date).toISOString().split('T')[0] : '',
     );
-    setProjectId(initialTask.project_id ?? 1);
+
+    setProjectId(prev => (initialTask.project_id !== undefined ? initialTask.project_id : prev));
   }, [initialTask]);
 
   const handleSubmit = (e: React.FormEvent) => {
