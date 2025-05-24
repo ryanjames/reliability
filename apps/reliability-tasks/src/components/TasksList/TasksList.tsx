@@ -1,5 +1,6 @@
 // components/TaskList.tsx
-import type { TTask, TProject } from '@types';
+import type { TTask } from '@types';
+import type { TProject } from '@reliability-ui';
 import {
   DndContext,
   closestCenter,

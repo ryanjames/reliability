@@ -4,8 +4,8 @@ import { useProjects } from '@hooks/useProjects';
 import { useAddProject } from '@hooks/useAddProject';
 import { useUpdateProject } from '@hooks/useUpdateProject';
 import { useDeleteProject } from '@hooks/useDeleteProject';
-import { Dialog } from '@reliability-ui';
-import type { TProject } from '@types';
+import { Dialog, ProjectForm, ProjectItem } from '@reliability-ui';
+import type { TProject } from '@reliability-ui';
 import { toast } from 'sonner';
 import { DndContext, PointerSensor, useSensor, useSensors, closestCenter } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
@@ -50,8 +50,8 @@ const ProjectsList = ({ onSelectProject, selectedProjectId }: ProjectsProps) => 
     );
   };
 
-  const handleUpdate = (id: number) => {
-    if (!user || !editTitle.trim() || !projects) return;
+  const handleUpdate = (id: number, title: string) => {
+    if (!user || !title.trim() || !projects) return;
 
     const original = projects.find(p => p.id === id);
     if (!original) return;
@@ -59,14 +59,14 @@ const ProjectsList = ({ onSelectProject, selectedProjectId }: ProjectsProps) => 
     updateProject.mutate(
       {
         id,
-        title: editTitle.trim(),
+        title: title.trim(),
         user_id: user.id,
         is_inbox: original.is_inbox,
         sort_order: original.sort_order,
       },
       {
         onSuccess: () => {
-          toast.success(`Project "${editTitle.trim()}" updated`);
+          toast.success(`Project "${title.trim()}" updated`);
           setEditingId(null);
           setEditTitle('');
         },
@@ -125,18 +125,12 @@ const ProjectsList = ({ onSelectProject, selectedProjectId }: ProjectsProps) => 
       {projects && (
         <ul className="space-y-2">
           {inboxProject && (
-            <li className="flex justify-between items-center">
-              <span
-                onClick={() => onSelectProject(inboxProject.id)}
-                className={`cursor-pointer px-2 py-1 rounded ${
-                  selectedProjectId === inboxProject.id
-                    ? 'bg-blue-100 text-blue-800 font-semibold'
-                    : 'hover:bg-gray-100'
-                }`}
-              >
-                {inboxProject.title}
-              </span>
-            </li>
+            <ProjectItem
+              project={inboxProject}
+              selectedProjectId={selectedProjectId}
+              onSelectProject={onSelectProject}
+              isInbox
+            />
           )}
 
           <DndContext
@@ -152,62 +146,25 @@ const ProjectsList = ({ onSelectProject, selectedProjectId }: ProjectsProps) => 
                 <SortableProject key={project.id} id={project.id}>
                   <li className="flex justify-between items-center">
                     {editingId === project.id ? (
-                      <>
-                        <input
-                          type="text"
-                          value={editTitle}
-                          onChange={e => setEditTitle(e.target.value)}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault();
-                              handleUpdate(project.id);
-                            }
-                          }}
-                          className="border px-2 py-1 w-full"
-                        />
-                        <button
-                          onClick={() => handleUpdate(project.id)}
-                          className="bg-green-600 text-white px-3 py-1 ml-2 rounded"
-                        >
-                          Save
-                        </button>
-                        <button onClick={handleCancel} className="text-gray-600 px-3 py-1 ml-2">
-                          Cancel
-                        </button>
-                      </>
+                      <ProjectForm
+                        initialTitle={project.title}
+                        onSubmit={title => handleUpdate(project.id, title)}
+                        onCancel={handleCancel}
+                      />
                     ) : (
-                      <>
-                        <span
-                          onClick={() => onSelectProject(project.id)}
-                          className={`cursor-pointer px-2 py-1 rounded ${
-                            selectedProjectId === project.id
-                              ? 'bg-blue-100 text-blue-800 font-semibold'
-                              : 'hover:bg-gray-100'
-                          }`}
-                        >
-                          {project.title}
-                        </span>
-                        <div className="space-x-2">
-                          <button
-                            onClick={() => {
-                              setEditingId(project.id);
-                              setEditTitle(project.title);
-                            }}
-                            className="text-blue-600"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => {
-                              setProjectToDelete(project);
-                              setConfirmOpen(true);
-                            }}
-                            className="text-red-500"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </>
+                      <ProjectItem
+                        project={project}
+                        selectedProjectId={selectedProjectId}
+                        onSelectProject={onSelectProject}
+                        onEdit={() => {
+                          setEditingId(project.id);
+                          setEditTitle(project.title);
+                        }}
+                        onDelete={() => {
+                          setProjectToDelete(project);
+                          setConfirmOpen(true);
+                        }}
+                      />
                     )}
                   </li>
                 </SortableProject>

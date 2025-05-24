@@ -32,5 +32,11 @@
       "@types/*": ["types/*"]
     }
   },
-  "include": ["src", "types", "tailwind.config.ts", "../../packages/reliability-ui/src"]
+  "include": [
+    "src",
+    "types",
+    "tailwind.config.ts",
+    "../../packages/reliability-ui/src",
+    "../../packages/reliability-ui/types"
+  ]
 }
