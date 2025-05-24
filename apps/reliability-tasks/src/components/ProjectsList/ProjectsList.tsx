@@ -144,29 +144,27 @@ const ProjectsList = ({ onSelectProject, selectedProjectId }: ProjectsProps) => 
             >
               {otherProjects.map(project => (
                 <SortableProject key={project.id} id={project.id}>
-                  <li className="flex justify-between items-center">
-                    {editingId === project.id ? (
-                      <ProjectForm
-                        initialTitle={project.title}
-                        onSubmit={title => handleUpdate(project.id, title)}
-                        onCancel={handleCancel}
-                      />
-                    ) : (
-                      <ProjectItem
-                        project={project}
-                        selectedProjectId={selectedProjectId}
-                        onSelectProject={onSelectProject}
-                        onEdit={() => {
-                          setEditingId(project.id);
-                          setEditTitle(project.title);
-                        }}
-                        onDelete={() => {
-                          setProjectToDelete(project);
-                          setConfirmOpen(true);
-                        }}
-                      />
-                    )}
-                  </li>
+                  {editingId === project.id ? (
+                    <ProjectForm
+                      initialTitle={project.title}
+                      onSubmit={title => handleUpdate(project.id, title)}
+                      onCancel={handleCancel}
+                    />
+                  ) : (
+                    <ProjectItem
+                      project={project}
+                      selectedProjectId={selectedProjectId}
+                      onSelectProject={onSelectProject}
+                      onEdit={() => {
+                        setEditingId(project.id);
+                        setEditTitle(project.title);
+                      }}
+                      onDelete={() => {
+                        setProjectToDelete(project);
+                        setConfirmOpen(true);
+                      }}
+                    />
+                  )}
                 </SortableProject>
               ))}
             </SortableContext>

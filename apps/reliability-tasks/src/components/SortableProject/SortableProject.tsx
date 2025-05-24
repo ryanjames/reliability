@@ -1,4 +1,3 @@
-// components/SortableProject.tsx
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { ReactNode } from 'react';
@@ -17,15 +16,15 @@ const SortableProject = ({ id, children }: Props) => {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="group bg-white p-2 rounded shadow">
+    <div ref={setNodeRef} style={style} className="flex group items-center">
       <div
         {...attributes}
         {...listeners}
-        className="cursor-move text-gray-400 group-hover:text-gray-600 select-none"
+        className="cursor-move w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity select-none"
       >
         ⠿
       </div>
-      <div>{children}</div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 };

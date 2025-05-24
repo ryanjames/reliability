@@ -44,66 +44,75 @@ export default function App() {
   if (selectedProjectId === null) return <p>Loading your workspace...</p>;
 
   return (
-    <main className="p-8">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Tasks</h1>
-        <span>{user.name}</span>
-        <span>{user.email}</span>
-        <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1 rounded">
-          Log out
-        </button>
+    <main className="flex">
+      <div className="w-xs p-4 relative">
+        <h1 className="text-2xl font-bold">Reliability Tasks</h1>
+        <ProjectsList onSelectProject={handleSelectProject} selectedProjectId={selectedProjectId} />
+        <div className="absolute bottom-0 p-4 box-border flex w-full left-0">
+          <div className="flex flex-col flex-1 text-xs align-bottom">
+            <span>{user.name}</span>
+            <span>{user.email}</span>
+          </div>
+          <div className="flex items-end">
+            <span
+              className="text-xs cursor-pointer inline-block p-2 border-1 border-gray-300 rounded hover:border-gray-400 transition duration-100"
+              onClick={handleLogout}
+            >
+              Log out
+            </span>
+          </div>
+        </div>
       </div>
 
       {isLoading && <p>Loading tasks...</p>}
       {error && <p className="text-red-600">{(error as Error).message}</p>}
 
-      {filteredTasks && (
-        <TasksList
-          tasks={filteredTasks}
-          projects={projects ?? []}
-          selectedProjectId={selectedProjectId}
-          inboxProjectId={inboxProjectId}
-          onSubmitTask={handleSubmitTask}
-          onEditTask={setEditingTask}
-          onDeleteTask={handleDeleteTask}
-          editingTask={editingTask}
-          onReorderTask={handleReorderTask}
+      <div className="flex-1 bg-white h-screen p-8 box-border border-l-1 border-gray-100">
+        {filteredTasks && (
+          <TasksList
+            tasks={filteredTasks}
+            projects={projects ?? []}
+            selectedProjectId={selectedProjectId}
+            inboxProjectId={inboxProjectId}
+            onSubmitTask={handleSubmitTask}
+            onEditTask={setEditingTask}
+            onDeleteTask={handleDeleteTask}
+            editingTask={editingTask}
+            onReorderTask={handleReorderTask}
+          />
+        )}
+        <Dialog
+          open={taskToDelete !== null}
+          onOpenChange={open => {
+            if (!open) setTaskToDelete(null);
+          }}
+          onConfirm={() => {
+            if (taskToDelete) {
+              deleteTask.mutate({ id: taskToDelete.id });
+              setTaskToDelete(null);
+            }
+          }}
+          title={`Delete ${taskToDelete?.title}?`}
+          description="This task will be permanently removed."
         />
-      )}
 
-      <Dialog
-        open={taskToDelete !== null}
-        onOpenChange={open => {
-          if (!open) setTaskToDelete(null);
-        }}
-        onConfirm={() => {
-          if (taskToDelete) {
-            deleteTask.mutate({ id: taskToDelete.id });
-            setTaskToDelete(null);
-          }
-        }}
-        title={`Delete ${taskToDelete?.title}?`}
-        description="This task will be permanently removed."
-      />
-
-      {adding ? (
-        <TaskForm
-          initialTask={{ project_id: selectedProjectId ?? inboxProjectId ?? undefined }}
-          onSubmit={handleSubmitTask}
-          onCancel={handleCancel}
-          submitLabel="Save Task"
-          projects={projects ?? []}
-        />
-      ) : (
-        <button
-          onClick={() => setAdding(true)}
-          className="mt-6 bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          ➕ Add task
-        </button>
-      )}
-
-      <ProjectsList onSelectProject={handleSelectProject} selectedProjectId={selectedProjectId} />
+        {adding ? (
+          <TaskForm
+            initialTask={{ project_id: selectedProjectId ?? inboxProjectId ?? undefined }}
+            onSubmit={handleSubmitTask}
+            onCancel={handleCancel}
+            submitLabel="Save Task"
+            projects={projects ?? []}
+          />
+        ) : (
+          <button
+            onClick={() => setAdding(true)}
+            className="mt-6 bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            ➕ Add task
+          </button>
+        )}
+      </div>
     </main>
   );
 }
