@@ -11,6 +11,7 @@ import {
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import SortableTask from '../SortableTask';
 import TaskForm from '../TaskForm';
+import { Task } from '@reliability-ui';
 
 interface TaskListProps {
   tasks: TTask[];
@@ -64,24 +65,14 @@ export default function TaskList({
                 projects={projects}
               />
             ) : (
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="font-semibold">{task.title}</div>
-                  <div className="text-sm text-gray-600">{task.description}</div>
-                  <div className="text-xs text-gray-500">
-                    Priority: {task.priority} | Due:{' '}
-                    {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'None'}
-                  </div>
-                </div>
-                <div className="space-x-2">
-                  <button onClick={() => onEditTask(task)} className="text-sm text-blue-600">
-                    Edit
-                  </button>
-                  <button onClick={() => onDeleteTask(task)} className="text-sm text-red-500">
-                    Delete
-                  </button>
-                </div>
-              </div>
+              <Task
+                title={task.title}
+                description={task.description}
+                priority={task.priority}
+                dueDate={task.due_date ? new Date(task.due_date).toLocaleDateString() : undefined}
+                onEdit={() => onEditTask(task)}
+                onDelete={() => onDeleteTask(task)}
+              />
             )}
           </SortableTask>
         ))}
