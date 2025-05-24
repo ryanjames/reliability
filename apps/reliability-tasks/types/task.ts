@@ -6,4 +6,5 @@ export interface TTask {
   description?: string;
   priority: 1 | 2 | 3;
   due_date: number | null;
+  sort_order: number;
 }

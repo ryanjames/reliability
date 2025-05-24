@@ -7,10 +7,15 @@ import { useUpdateTask } from '@hooks/useUpdateTask';
 import { useProjects } from '@hooks/useProjects';
 import { Dialog } from '@reliability-ui';
 import { useDeleteTask } from '@hooks/useDeleteTask';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import SortableTask from './components/SortableTask';
+
 import TaskForm from './components/TaskForm';
 import { toast } from 'sonner';
 import type { TTask } from '@types';
-import Projects from './components/Projects/Projects';
+import Projects from './components/Projects';
 
 export default function App() {
   const user = useAuthStore(state => state.user);
@@ -84,6 +89,26 @@ export default function App() {
 
   const filteredTasks = tasks?.filter(task => task.project_id === selectedProjectId);
 
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    if (!filteredTasks) return; // early exit
+
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = filteredTasks.findIndex(t => t.id === active.id);
+    const newIndex = filteredTasks.findIndex(t => t.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(filteredTasks, oldIndex, newIndex);
+
+    reordered.forEach((task, index) => {
+      updateTask.mutate({ id: task.id, sort_order: index });
+    });
+  };
+
   if (!user) {
     return <AuthForm />;
   }
@@ -96,6 +121,8 @@ export default function App() {
     <main className="p-8">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Tasks</h1>
+        <span>{user.name}</span>
+        <span>{user.email}</span>
         <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1 rounded">
           Log out
         </button>
@@ -106,43 +133,57 @@ export default function App() {
 
       {filteredTasks && (
         <>
-          <ul className="space-y-3">
-            {filteredTasks.map(task => (
-              <li key={task.id} className="border-b pb-2">
-                {editingTask?.id === task.id ? (
-                  <TaskForm
-                    initialTask={task}
-                    onSubmit={handleSubmitTask}
-                    onCancel={handleCancel}
-                    submitLabel="Update Task"
-                    projects={projects ?? []}
-                  />
-                ) : (
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="font-semibold">{task.title}</div>
-                      <div className="text-sm text-gray-600">{task.description}</div>
-                      <div className="text-xs text-gray-500">
-                        Priority: {task.priority} | Due:{' '}
-                        {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'None'}
+          <div className="space-y-3">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={filteredTasks.map(t => t.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {filteredTasks.map(task => (
+                  <SortableTask key={task.id} task={task}>
+                    {editingTask?.id === task.id ? (
+                      <TaskForm
+                        initialTask={task}
+                        onSubmit={handleSubmitTask}
+                        onCancel={handleCancel}
+                        submitLabel="Update Task"
+                        projects={projects ?? []}
+                      />
+                    ) : (
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-semibold">{task.title}</div>
+                          <div className="text-sm text-gray-600">{task.description}</div>
+                          <div className="text-xs text-gray-500">
+                            Priority: {task.priority} | Due:{' '}
+                            {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'None'}
+                          </div>
+                        </div>
+                        <div className="space-x-2">
+                          <button
+                            onClick={() => setEditingTask(task)}
+                            className="text-sm text-blue-600"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(task)}
+                            className="text-sm text-red-500"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <div className="space-x-2">
-                      <button
-                        onClick={() => setEditingTask(task)}
-                        className="text-sm text-blue-600"
-                      >
-                        Edit
-                      </button>
-                      <button onClick={() => handleDelete(task)} className="text-sm text-red-500">
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
+                    )}
+                  </SortableTask>
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
           <Dialog
             open={open}
             onOpenChange={setOpen}

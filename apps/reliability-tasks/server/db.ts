@@ -50,11 +50,21 @@ const schema: Record<string, { createSQL: string; columns: string[] }> = {
         description TEXT,
         priority INTEGER NOT NULL CHECK (priority BETWEEN 1 AND 3),
         due_date INTEGER,
+        sort_order INTEGER NOT NULL DEFAULT 0,
         FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
     `,
-    columns: ['id', 'project_id', 'user_id', 'title', 'description', 'priority', 'due_date'],
+    columns: [
+      'id',
+      'project_id',
+      'user_id',
+      'title',
+      'description',
+      'priority',
+      'due_date',
+      'sort_order',
+    ],
   },
 };
 

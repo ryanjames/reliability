@@ -13,7 +13,11 @@ app.get('/api/tasks', c => {
   if (!userId) return c.json({ error: 'Missing userId' }, 400);
 
   try {
-    const result = db.exec(`SELECT * FROM tasks WHERE user_id = ${userId}`);
+    const result = db.exec(`
+      SELECT * FROM tasks
+      WHERE user_id = ${userId}
+      ORDER BY sort_order
+    `);
     if (!result.length) return c.json([]);
 
     const { values } = result[0];
@@ -25,6 +29,7 @@ app.get('/api/tasks', c => {
       description: row[4] as string,
       priority: row[5] as 1 | 2 | 3,
       due_date: row[6] as number | null,
+      sort_order: row[7] as number,
     }));
 
     return c.json(tasks);
