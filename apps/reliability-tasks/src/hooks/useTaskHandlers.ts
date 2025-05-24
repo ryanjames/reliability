@@ -8,6 +8,9 @@ export function useTaskHandlers(
   userId: number,
   inboxProjectId: number | null,
   selectedProjectId: number | null,
+  options?: {
+    setAdding?: (adding: boolean) => void;
+  },
 ) {
   const addTask = useAddTask();
   const updateTask = useUpdateTask();
@@ -26,10 +29,21 @@ export function useTaskHandlers(
     };
 
     if (editingTask?.id) {
-      updateTask.mutate({ id: editingTask.id, ...payload });
-      setEditingTask(null);
+      updateTask.mutate(
+        { id: editingTask.id, ...payload },
+        {
+          onSuccess: () => {
+            setEditingTask(null);
+          },
+        },
+      );
     } else {
-      addTask.mutate(payload);
+      addTask.mutate(payload, {
+        onSuccess: () => {
+          setEditingTask(null);
+          options?.setAdding?.(false); // ✅ Close the form
+        },
+      });
     }
   };
 

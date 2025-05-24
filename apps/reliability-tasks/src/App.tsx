@@ -36,7 +36,7 @@ export default function App() {
     taskToDelete,
     setTaskToDelete,
     deleteTask,
-  } = useTaskHandlers(userId, inboxProjectId, selectedProjectId);
+  } = useTaskHandlers(userId, inboxProjectId, selectedProjectId, { setAdding });
 
   const filteredTasks = tasks?.filter(task => task.project_id === selectedProjectId);
 
