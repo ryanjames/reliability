@@ -1,0 +1,91 @@
+// components/TaskList.tsx
+import type { TTask, TProject } from '@types';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import SortableTask from '../SortableTask';
+import TaskForm from '../TaskForm';
+
+interface TaskListProps {
+  tasks: TTask[];
+  projects: TProject[];
+  selectedProjectId: number;
+  inboxProjectId: number | null;
+  onSubmitTask: (data: Partial<TTask>) => void;
+  onEditTask: (task: TTask | null) => void;
+  onDeleteTask: (task: TTask) => void;
+  editingTask: TTask | null;
+  onReorderTask: (task: Pick<TTask, 'id' | 'sort_order'>) => void;
+}
+
+export default function TaskList({
+  tasks,
+  projects,
+  onSubmitTask,
+  onEditTask,
+  onDeleteTask,
+  editingTask,
+  onReorderTask,
+}: TaskListProps) {
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = tasks.findIndex(t => t.id === active.id);
+    const newIndex = tasks.findIndex(t => t.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(tasks, oldIndex, newIndex);
+
+    reordered.forEach((task, index) => {
+      onReorderTask({ id: task.id, sort_order: index });
+    });
+  };
+
+  return (
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
+        {tasks.map(task => (
+          <SortableTask key={task.id} task={task}>
+            {editingTask?.id === task.id ? (
+              <TaskForm
+                initialTask={task}
+                onSubmit={onSubmitTask}
+                onCancel={() => onEditTask(null)}
+                submitLabel="Update Task"
+                projects={projects}
+              />
+            ) : (
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="font-semibold">{task.title}</div>
+                  <div className="text-sm text-gray-600">{task.description}</div>
+                  <div className="text-xs text-gray-500">
+                    Priority: {task.priority} | Due:{' '}
+                    {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'None'}
+                  </div>
+                </div>
+                <div className="space-x-2">
+                  <button onClick={() => onEditTask(task)} className="text-sm text-blue-600">
+                    Edit
+                  </button>
+                  <button onClick={() => onDeleteTask(task)} className="text-sm text-red-500">
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )}
+          </SortableTask>
+        ))}
+      </SortableContext>
+    </DndContext>
+  );
+}

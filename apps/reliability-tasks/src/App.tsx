@@ -5,17 +5,14 @@ import { useTasks } from '@hooks/useTasks';
 import { useAddTask } from '@hooks/useAddTask';
 import { useUpdateTask } from '@hooks/useUpdateTask';
 import { useProjects } from '@hooks/useProjects';
-import { Dialog } from '@reliability-ui';
 import { useDeleteTask } from '@hooks/useDeleteTask';
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import type { DragEndEvent } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
-import SortableTask from './components/SortableTask';
-
-import TaskForm from './components/TaskForm';
 import { toast } from 'sonner';
+import { Dialog } from '@reliability-ui';
+import TaskForm from './components/TaskForm';
 import type { TTask } from '@types';
-import Projects from './components/Projects';
+
+import ProjectsList from './components/ProjectsList';
+import TasksList from './components/TasksList';
 
 export default function App() {
   const user = useAuthStore(state => state.user);
@@ -23,7 +20,6 @@ export default function App() {
 
   const userId = user?.id ?? 0;
   const { data: projects } = useProjects(userId, { enabled: !!user?.id });
-
   const { data: tasks, isLoading, error } = useTasks();
 
   const queryParams = new URLSearchParams(window.location.search);
@@ -36,7 +32,6 @@ export default function App() {
   const [adding, setAdding] = useState(false);
   const [editingTask, setEditingTask] = useState<TTask | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<TTask | null>(null);
-
   const [open, setOpen] = useState(false);
 
   const addTask = useAddTask();
@@ -87,9 +82,12 @@ export default function App() {
     setEditingTask(null);
   };
 
+  const handleReorderTask = (task: Pick<TTask, 'id' | 'sort_order'>) => {
+    updateTask.mutate(task);
+  };
+
   const handleSelectProject = (projectId: number) => {
     setSelectedProjectId(projectId);
-
     const isInbox = projects?.find(p => p.id === projectId)?.is_inbox === 1;
     const url = isInbox ? '/' : `/?project=${projectId}`;
     window.history.pushState({}, '', url);
@@ -103,33 +101,8 @@ export default function App() {
 
   const filteredTasks = tasks?.filter(task => task.project_id === selectedProjectId);
 
-  const sensors = useSensors(useSensor(PointerSensor));
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    if (!filteredTasks) return; // early exit
-
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    const oldIndex = filteredTasks.findIndex(t => t.id === active.id);
-    const newIndex = filteredTasks.findIndex(t => t.id === over.id);
-
-    if (oldIndex === -1 || newIndex === -1) return;
-
-    const reordered = arrayMove(filteredTasks, oldIndex, newIndex);
-
-    reordered.forEach((task, index) => {
-      updateTask.mutate({ id: task.id, sort_order: index });
-    });
-  };
-
-  if (!user) {
-    return <AuthForm />;
-  }
-
-  if (selectedProjectId === null) {
-    return <p>Loading your workspace...</p>;
-  }
+  if (!user) return <AuthForm />;
+  if (selectedProjectId === null) return <p>Loading your workspace...</p>;
 
   return (
     <main className="p-8">
@@ -146,67 +119,26 @@ export default function App() {
       {error && <p className="text-red-600">{(error as Error).message}</p>}
 
       {filteredTasks && (
-        <>
-          <div className="space-y-3">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={filteredTasks.map(t => t.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                {filteredTasks.map(task => (
-                  <SortableTask key={task.id} task={task}>
-                    {editingTask?.id === task.id ? (
-                      <TaskForm
-                        initialTask={task}
-                        onSubmit={handleSubmitTask}
-                        onCancel={handleCancel}
-                        submitLabel="Update Task"
-                        projects={projects ?? []}
-                      />
-                    ) : (
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="font-semibold">{task.title}</div>
-                          <div className="text-sm text-gray-600">{task.description}</div>
-                          <div className="text-xs text-gray-500">
-                            Priority: {task.priority} | Due:{' '}
-                            {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'None'}
-                          </div>
-                        </div>
-                        <div className="space-x-2">
-                          <button
-                            onClick={() => setEditingTask(task)}
-                            className="text-sm text-blue-600"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(task)}
-                            className="text-sm text-red-500"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </SortableTask>
-                ))}
-              </SortableContext>
-            </DndContext>
-          </div>
-          <Dialog
-            open={open}
-            onOpenChange={setOpen}
-            onConfirm={confirm}
-            title={`Delete ${taskToDelete?.title}?`}
-            description="This task will be permanently removed."
-          />
-        </>
+        <TasksList
+          tasks={filteredTasks}
+          projects={projects ?? []}
+          selectedProjectId={selectedProjectId}
+          inboxProjectId={inboxProjectId}
+          onSubmitTask={handleSubmitTask}
+          onEditTask={setEditingTask}
+          onDeleteTask={handleDelete}
+          editingTask={editingTask}
+          onReorderTask={handleReorderTask}
+        />
       )}
+
+      <Dialog
+        open={open}
+        onOpenChange={setOpen}
+        onConfirm={confirm}
+        title={`Delete ${taskToDelete?.title}?`}
+        description="This task will be permanently removed."
+      />
 
       {adding ? (
         <TaskForm
@@ -224,7 +156,8 @@ export default function App() {
           ➕ Add task
         </button>
       )}
-      <Projects onSelectProject={handleSelectProject} selectedProjectId={selectedProjectId} />
+
+      <ProjectsList onSelectProject={handleSelectProject} selectedProjectId={selectedProjectId} />
     </main>
   );
 }

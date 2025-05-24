@@ -17,7 +17,7 @@ interface ProjectsProps {
   selectedProjectId: number | null;
 }
 
-const Projects = ({ onSelectProject, selectedProjectId }: ProjectsProps) => {
+const ProjectsList = ({ onSelectProject, selectedProjectId }: ProjectsProps) => {
   const user = useAuthStore(state => state.user);
   const userId = user?.id;
   const enabled = !!userId;
@@ -84,6 +84,11 @@ const Projects = ({ onSelectProject, selectedProjectId }: ProjectsProps) => {
       );
       setProjectToDelete(null);
     }
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditTitle('');
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -166,13 +171,7 @@ const Projects = ({ onSelectProject, selectedProjectId }: ProjectsProps) => {
                         >
                           Save
                         </button>
-                        <button
-                          onClick={() => {
-                            setEditingId(null);
-                            setEditTitle('');
-                          }}
-                          className="text-gray-600 px-3 py-1 ml-2"
-                        >
+                        <button onClick={handleCancel} className="text-gray-600 px-3 py-1 ml-2">
                           Cancel
                         </button>
                       </>
@@ -268,4 +267,4 @@ const Projects = ({ onSelectProject, selectedProjectId }: ProjectsProps) => {
   );
 };
 
-export default Projects;
+export default ProjectsList;
