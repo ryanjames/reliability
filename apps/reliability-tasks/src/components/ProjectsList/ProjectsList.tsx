@@ -123,7 +123,7 @@ const ProjectsList = ({ onSelectProject, selectedProjectId }: ProjectsProps) => 
       {error && <p className="text-red-600">{(error as Error).message}</p>}
 
       {projects && (
-        <ul className="space-y-2">
+        <div className="space-y-2">
           {inboxProject && (
             <ProjectItem
               project={inboxProject}
@@ -171,7 +171,7 @@ const ProjectsList = ({ onSelectProject, selectedProjectId }: ProjectsProps) => 
               ))}
             </SortableContext>
           </DndContext>
-        </ul>
+        </div>
       )}
 
       {adding ? (

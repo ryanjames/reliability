@@ -12,7 +12,7 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Theme>
+      <Theme hasBackground={false}>
         <App />
         <Toast />
       </Theme>
