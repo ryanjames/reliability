@@ -1,103 +1,42 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState } from 'react';
 import AuthForm from './components/AuthForm';
-import { useAuthStore } from '@store/useAuthStore';
 import { useTasks } from '@hooks/useTasks';
-import { useAddTask } from '@hooks/useAddTask';
-import { useUpdateTask } from '@hooks/useUpdateTask';
-import { useProjects } from '@hooks/useProjects';
-import { useDeleteTask } from '@hooks/useDeleteTask';
-import { toast } from 'sonner';
 import { Dialog } from '@reliability-ui';
 import TaskForm from './components/TaskForm';
-import type { TTask } from '@types';
+import { useSession } from '@hooks/useSession';
+import { useProjectSelection } from '@hooks/useProjectSelection';
+import { useTaskHandlers } from '@hooks/useTaskHandlers';
 
 import ProjectsList from './components/ProjectsList';
 import TasksList from './components/TasksList';
 
 export default function App() {
-  const user = useAuthStore(state => state.user);
-  const logout = useAuthStore(state => state.logout);
-
-  const userId = user?.id ?? 0;
-  const { data: projects } = useProjects(userId, { enabled: !!user?.id });
+  const { user, handleLogout } = useSession();
   const { data: tasks, isLoading, error } = useTasks();
 
-  const queryParams = new URLSearchParams(window.location.search);
-  const projectParam = queryParams.get('project');
-
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
-    projectParam !== null && !Number.isNaN(Number(projectParam)) ? Number(projectParam) : null,
-  );
-
   const [adding, setAdding] = useState(false);
-  const [editingTask, setEditingTask] = useState<TTask | null>(null);
-  const [taskToDelete, setTaskToDelete] = useState<TTask | null>(null);
-  const [open, setOpen] = useState(false);
 
-  const addTask = useAddTask();
-  const updateTask = useUpdateTask();
-  const deleteTask = useDeleteTask();
-
-  const inboxProjectId = useMemo(() => {
-    return projects?.find(p => p.user_id === user?.id && p.is_inbox === 1)?.id ?? null;
-  }, [projects, user?.id]);
-
-  const handleLogout = () => {
-    if (user) toast(`Logged out ${user.name} (${user.email})`);
-    logout();
-  };
-
-  const handleDelete = (task: TTask) => {
-    setTaskToDelete(task);
-    setOpen(true);
-  };
-
-  const confirm = () => {
-    if (taskToDelete) {
-      deleteTask.mutate({ id: taskToDelete.id });
-      setTaskToDelete(null);
-    }
-  };
-
-  const handleSubmitTask = (data: Partial<TTask>) => {
-    if (!user || selectedProjectId == null) return;
-
-    const payload = {
-      ...data,
-      user_id: user.id,
-      project_id: data.project_id ?? inboxProjectId ?? selectedProjectId,
-    };
-
-    if (editingTask?.id) {
-      updateTask.mutate({ id: editingTask.id, ...payload });
-      setEditingTask(null);
-    } else {
-      addTask.mutate(payload);
-      setAdding(false);
-    }
-  };
+  const { projects, inboxProjectId, selectedProjectId, handleSelectProject } = useProjectSelection(
+    user?.id ?? null,
+  );
 
   const handleCancel = () => {
     setAdding(false);
     setEditingTask(null);
   };
 
-  const handleReorderTask = (task: Pick<TTask, 'id' | 'sort_order'>) => {
-    updateTask.mutate(task);
-  };
+  const userId = user?.id ?? 0;
 
-  const handleSelectProject = (projectId: number) => {
-    setSelectedProjectId(projectId);
-    const isInbox = projects?.find(p => p.id === projectId)?.is_inbox === 1;
-    const url = isInbox ? '/' : `/?project=${projectId}`;
-    window.history.pushState({}, '', url);
-  };
-
-  useEffect(() => {
-    if (inboxProjectId && selectedProjectId === null) {
-      setSelectedProjectId(inboxProjectId);
-    }
-  }, [inboxProjectId, selectedProjectId]);
+  const {
+    handleSubmitTask,
+    handleDeleteTask,
+    handleReorderTask,
+    editingTask,
+    setEditingTask,
+    taskToDelete,
+    setTaskToDelete,
+    deleteTask,
+  } = useTaskHandlers(userId, inboxProjectId, selectedProjectId);
 
   const filteredTasks = tasks?.filter(task => task.project_id === selectedProjectId);
 
@@ -126,16 +65,23 @@ export default function App() {
           inboxProjectId={inboxProjectId}
           onSubmitTask={handleSubmitTask}
           onEditTask={setEditingTask}
-          onDeleteTask={handleDelete}
+          onDeleteTask={handleDeleteTask}
           editingTask={editingTask}
           onReorderTask={handleReorderTask}
         />
       )}
 
       <Dialog
-        open={open}
-        onOpenChange={setOpen}
-        onConfirm={confirm}
+        open={taskToDelete !== null}
+        onOpenChange={open => {
+          if (!open) setTaskToDelete(null);
+        }}
+        onConfirm={() => {
+          if (taskToDelete) {
+            deleteTask.mutate({ id: taskToDelete.id });
+            setTaskToDelete(null);
+          }
+        }}
         title={`Delete ${taskToDelete?.title}?`}
         description="This task will be permanently removed."
       />
