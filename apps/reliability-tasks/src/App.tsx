@@ -26,10 +26,16 @@ export default function App() {
 
   const { data: tasks, isLoading, error } = useTasks();
 
+  const queryParams = new URLSearchParams(window.location.search);
+  const projectParam = queryParams.get('project');
+
+  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
+    projectParam !== null && !Number.isNaN(Number(projectParam)) ? Number(projectParam) : null,
+  );
+
   const [adding, setAdding] = useState(false);
   const [editingTask, setEditingTask] = useState<TTask | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<TTask | null>(null);
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
 
   const [open, setOpen] = useState(false);
 
@@ -79,6 +85,14 @@ export default function App() {
   const handleCancel = () => {
     setAdding(false);
     setEditingTask(null);
+  };
+
+  const handleSelectProject = (projectId: number) => {
+    setSelectedProjectId(projectId);
+
+    const isInbox = projects?.find(p => p.id === projectId)?.is_inbox === 1;
+    const url = isInbox ? '/' : `/?project=${projectId}`;
+    window.history.pushState({}, '', url);
   };
 
   useEffect(() => {
@@ -210,7 +224,7 @@ export default function App() {
           ➕ Add task
         </button>
       )}
-      <Projects onSelectProject={setSelectedProjectId} selectedProjectId={selectedProjectId} />
+      <Projects onSelectProject={handleSelectProject} selectedProjectId={selectedProjectId} />
     </main>
   );
 }
