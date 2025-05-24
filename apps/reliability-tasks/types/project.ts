@@ -3,4 +3,5 @@ export interface TProject {
   user_id: number;
   title: string;
   is_inbox: number;
+  sort_order: number;
 }

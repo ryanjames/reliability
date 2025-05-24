@@ -51,32 +51,22 @@ taskRoutes.put('/tasks/:id', async c => {
   const id = Number(c.req.param('id'));
   const body = await c.req.json();
 
+  const allowedFields = [
+    'title',
+    'description',
+    'priority',
+    'due_date',
+    'project_id',
+    'sort_order',
+  ];
   const fields: string[] = [];
   const values: unknown[] = [];
 
-  if (body.title !== undefined) {
-    fields.push('title = ?');
-    values.push(body.title);
-  }
-  if (body.description !== undefined) {
-    fields.push('description = ?');
-    values.push(body.description ?? '');
-  }
-  if (body.priority !== undefined) {
-    fields.push('priority = ?');
-    values.push(body.priority);
-  }
-  if (body.due_date !== undefined) {
-    fields.push('due_date = ?');
-    values.push(body.due_date ?? null);
-  }
-  if (body.project_id !== undefined) {
-    fields.push('project_id = ?');
-    values.push(body.project_id);
-  }
-  if (body.sort_order !== undefined) {
-    fields.push('sort_order = ?');
-    values.push(body.sort_order);
+  for (const field of allowedFields) {
+    if (field in body) {
+      fields.push(`${field} = ?`);
+      values.push(body[field]);
+    }
   }
 
   if (fields.length === 0) {

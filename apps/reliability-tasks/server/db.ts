@@ -35,10 +35,11 @@ const schema: Record<string, { createSQL: string; columns: string[] }> = {
         user_id INTEGER NOT NULL,
         title TEXT NOT NULL,
         is_inbox INTEGER DEFAULT 0,
+        sort_order INTEGER DEFAULT 0,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
     `,
-    columns: ['id', 'user_id', 'title', 'is_inbox'],
+    columns: ['id', 'user_id', 'title', 'is_inbox', 'sort_order'],
   },
   tasks: {
     createSQL: `
