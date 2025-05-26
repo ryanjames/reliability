@@ -7,10 +7,11 @@ import { cn } from '@reliability-ui';
 interface Props {
   task: TTask;
   children: ReactNode;
-  activeTaskId: number | null; // 👈 passed in
+  activeTaskId: number | null;
+  hideHandle?: boolean;
 }
 
-const SortableTask = ({ task, children, activeTaskId }: Props) => {
+const SortableTask = ({ task, children, activeTaskId, hideHandle }: Props) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task.id,
   });
@@ -18,7 +19,7 @@ const SortableTask = ({ task, children, activeTaskId }: Props) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: task.id === activeTaskId ? 0 : 1, // 👈 hide the original during drag
+    opacity: task.id === activeTaskId ? 0 : 1,
   };
 
   return (
@@ -32,7 +33,13 @@ const SortableTask = ({ task, children, activeTaskId }: Props) => {
       <div
         {...attributes}
         {...listeners}
-        className="opacity-0 group-hover:opacity-100 cursor-move text-gray-400 group-hover:text-gray-600 select-none transition"
+        className={cn(
+          'cursor-move text-gray-400 group-hover:text-gray-600 select-none transition',
+          {
+            'opacity-0 group-hover:opacity-100': !hideHandle,
+            hidden: hideHandle, // 👈 completely hide when editing
+          },
+        )}
       >
         ⠿
       </div>

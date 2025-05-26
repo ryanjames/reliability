@@ -3,12 +3,12 @@ import { Button as RadixButton, ButtonProps as RadixButtonProps } from '@radix-u
 import { cn } from '../../utils/cn';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors',
+  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors cursor-pointer',
   {
     variants: {
       intent: {
         primary: 'bg-blue-600 text-white hover:bg-blue-700',
-        secondary: 'bg-gray-100 text-black hover:bg-gray-200',
+        secondary: 'bg-transparent border-1 border-gray-300 text-black hover:bg-white',
       },
       size: {
         sm: 'h-8 px-3',

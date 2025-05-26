@@ -128,7 +128,12 @@ export default function TaskList({
         </DragOverlay>
         <SortableContext items={activeTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
           {activeTasks.map(task => (
-            <SortableTask key={task.id} task={task} activeTaskId={activeTask?.id ?? null}>
+            <SortableTask
+              key={task.id}
+              task={task}
+              activeTaskId={activeTask?.id ?? null}
+              hideHandle={editingTask?.id === task.id} // 👈 pass prop
+            >
               {editingTask?.id === task.id ? (
                 <TaskForm
                   initialTask={{
@@ -163,11 +168,11 @@ export default function TaskList({
           initialTask={{ project_id: selectedProjectId ?? inboxProjectId ?? undefined }}
           onSubmit={onSubmitTask}
           onCancel={onCancelAdd}
-          submitLabel="Save Task"
+          submitLabel="Add Task"
           projects={projects}
         />
       ) : (
-        <div className="mt-6 ml-4.5">
+        <div className="mt-6">
           <AddAction label="Add Task" onClick={() => setAdding(true)} className="ml-5 mt-2" />
         </div>
       )}

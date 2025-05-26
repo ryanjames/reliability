@@ -1,6 +1,9 @@
-// packages/reliability-ui/src/components/TaskForm.tsx
-
+import Input from '../Input';
 import { useEffect, useState } from 'react';
+import SelectField, { Select } from '../SelectField';
+import Textarea from '../Textarea';
+import DatePicker from '../DatePicker';
+import Button from '../Button';
 
 interface TaskFormProps {
   initialTask?: {
@@ -33,8 +36,8 @@ export default function TaskForm({
   const [title, setTitle] = useState(initialTask?.title ?? '');
   const [description, setDescription] = useState(initialTask?.description ?? '');
   const [priority, setPriority] = useState<1 | 2 | 3>(initialTask?.priority ?? 1);
-  const [dueDate, setDueDate] = useState(
-    initialTask?.due_date ? new Date(initialTask.due_date).toISOString().split('T')[0] : '',
+  const [dueDate, setDueDate] = useState<number | ''>(
+    typeof initialTask?.due_date === 'number' ? initialTask.due_date : '',
   );
   const [projectId, setProjectId] = useState(() => {
     if (initialTask?.project_id) return initialTask.project_id;
@@ -44,12 +47,19 @@ export default function TaskForm({
 
   useEffect(() => {
     if (!initialTask?.id) return;
+
     setTitle(initialTask.title ?? '');
     setDescription(initialTask.description ?? '');
     setPriority(initialTask.priority ?? 1);
-    setDueDate(
-      initialTask.due_date ? new Date(initialTask.due_date).toISOString().split('T')[0] : '',
-    );
+
+    if (initialTask.due_date) {
+      const date = new Date(initialTask.due_date);
+      const utcMidnight = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+      setDueDate(utcMidnight);
+    } else {
+      setDueDate('');
+    }
+
     setProjectId(prev => initialTask.project_id ?? prev);
   }, [initialTask]);
 
@@ -59,65 +69,81 @@ export default function TaskForm({
       title,
       description,
       priority,
-      due_date: dueDate ? Date.parse(dueDate) : undefined,
+      due_date: dueDate || undefined, // already a UTC timestamp or ''
       project_id: projectId,
     });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
-      <input
+    <form
+      onSubmit={handleSubmit}
+      className="bg-paper flex flex-col gap-3 border-1 border-gray-200 p-4 rounded space-y-2"
+    >
+      <Input
         type="text"
-        placeholder="Title"
         value={title}
         onChange={e => setTitle(e.target.value)}
-        className="border px-3 py-2 w-full"
-        required
+        placeholder="New project title"
+        autoFocus
       />
-      <textarea
+      <Textarea
         placeholder="Description"
         value={description}
         onChange={e => setDescription(e.target.value)}
-        className="border px-3 py-2 w-full"
       />
-      <select
-        value={priority}
-        onChange={e => setPriority(Number(e.target.value) as 1 | 2 | 3)}
-        className="border px-3 py-2 w-full"
-      >
-        <option value={1}>Low</option>
-        <option value={2}>Medium</option>
-        <option value={3}>High</option>
-      </select>
-      <input
-        type="date"
-        value={dueDate}
-        onChange={e => setDueDate(e.target.value)}
-        className="border px-3 py-2 w-full"
-      />
-      <select
-        value={projectId}
-        onChange={e => setProjectId(Number(e.target.value))}
-        className="border px-3 py-2 w-full"
-      >
-        {projects.map(project => (
-          <option key={project.id} value={project.id}>
-            {project.title}
-          </option>
-        ))}
-      </select>
-      <div className="flex gap-2">
-        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-          {submitLabel}
-        </button>
-        {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="bg-gray-300 text-gray-800 px-4 py-2 rounded"
+
+      <div className="flex items-center gap-6">
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm">Due</span>
+          <DatePicker
+            value={
+              typeof dueDate === 'number'
+                ? new Date(dueDate)
+                : dueDate
+                  ? new Date(dueDate)
+                  : undefined
+            }
+            onChange={date => {
+              if (date) {
+                const localMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                setDueDate(localMidnight.getTime());
+              }
+            }}
+          />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm">Priority</span>
+          <SelectField
+            value={priority.toString()}
+            onValueChange={val => setPriority(Number(val) as 1 | 2 | 3)}
           >
+            <Select.Item value="1">Low</Select.Item>
+            <Select.Item value="2">Medium</Select.Item>
+            <Select.Item value="3">High</Select.Item>
+          </SelectField>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm">Project</span>
+          <SelectField
+            value={projectId.toString()}
+            onValueChange={val => setProjectId(Number(val))}
+          >
+            {projects.map(project => (
+              <Select.Item key={project.id} value={project.id.toString()}>
+                {project.title}
+              </Select.Item>
+            ))}
+          </SelectField>
+        </div>
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button type="submit" size="sm">
+          {submitLabel}
+        </Button>
+        {onCancel && (
+          <Button intent="secondary" size="sm" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         )}
       </div>
     </form>
