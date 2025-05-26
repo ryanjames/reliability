@@ -42,20 +42,6 @@ export const Secondary: Story = {
   },
 };
 
-export const Large: Story = {
-  args: {
-    size: 'lg',
-    children: 'Large Button',
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button', { name: /large button/i });
-
-    await userEvent.click(button);
-    await expect(button).toBeVisible();
-  },
-};
-
 export const Small: Story = {
   args: {
     size: 'sm',
@@ -64,6 +50,34 @@ export const Small: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole('button', { name: /small button/i });
+
+    await userEvent.click(button);
+    await expect(button).toBeVisible();
+  },
+};
+
+export const Medium: Story = {
+  args: {
+    size: 'md',
+    children: 'Medium Button',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: /small button/i });
+
+    await userEvent.click(button);
+    await expect(button).toBeVisible();
+  },
+};
+
+export const Large: Story = {
+  args: {
+    size: 'lg',
+    children: 'Large Button',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: /large button/i });
 
     await userEvent.click(button);
     await expect(button).toBeVisible();

@@ -10,6 +10,7 @@
       "url": "https://ryanjam.es"
     }
   ],
+  "packageManager": "pnpm@8.6.7",
   "_comment": "R.J.: Tailwind added here for IntelliSense in monorepo setup.",
   "type": "module",
   "license": "MIT",
@@ -18,7 +19,9 @@
     "lint:check": "eslint . ",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "dev:app": "pnpm --filter reliability-tasks dev",
+    "dev:ui": "pnpm --filter reliability-ui storybook"
   },
   "lint-staged": {
     "*.{js,mjs,ts,tsx,jsx}": [
