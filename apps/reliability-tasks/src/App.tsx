@@ -2,7 +2,6 @@ import { useState } from 'react';
 import AuthForm from './components/AuthForm';
 import { useTasks } from '@hooks/useTasks';
 import { Dialog } from '@reliability-ui';
-import { TaskForm } from '@reliability-ui';
 import { useSession } from '@hooks/useSession';
 import { useProjectSelection } from '@hooks/useProjectSelection';
 import { useTaskHandlers } from '@hooks/useTaskHandlers';
@@ -31,11 +30,12 @@ export default function App() {
     handleSubmitTask,
     handleDeleteTask,
     handleReorderTask,
+    handleToggleComplete,
     editingTask,
     setEditingTask,
     taskToDelete,
     setTaskToDelete,
-    deleteTask,
+    confirmDeleteTask,
   } = useTaskHandlers(userId, inboxProjectId, selectedProjectId, { setAdding });
 
   const filteredTasks = tasks?.filter(task => task.project_id === selectedProjectId);
@@ -66,51 +66,35 @@ export default function App() {
       {isLoading && <p>Loading tasks...</p>}
       {error && <p className="text-red-600">{(error as Error).message}</p>}
 
-      <div className="flex-1 bg-white h-screen p-8 box-border border-l-1 border-gray-100">
-        {filteredTasks && (
-          <TasksList
-            tasks={filteredTasks}
-            projects={projects ?? []}
-            selectedProjectId={selectedProjectId}
-            inboxProjectId={inboxProjectId}
-            onSubmitTask={handleSubmitTask}
-            onEditTask={setEditingTask}
-            onDeleteTask={handleDeleteTask}
-            editingTask={editingTask}
-            onReorderTask={handleReorderTask}
+      <div className="flex-1 justify-center flex bg-white h-screen p-8 box-border border-l-1 border-gray-100">
+        <div style={{ maxWidth: '600px' }} className="flex-1 pr-4 pt-6">
+          {filteredTasks && (
+            <TasksList
+              tasks={filteredTasks}
+              projects={projects ?? []}
+              selectedProjectId={selectedProjectId}
+              inboxProjectId={inboxProjectId}
+              onSubmitTask={handleSubmitTask}
+              onEditTask={setEditingTask}
+              onDeleteTask={handleDeleteTask}
+              editingTask={editingTask}
+              onReorderTask={handleReorderTask}
+              onToggleComplete={handleToggleComplete}
+              adding={adding}
+              setAdding={setAdding}
+              onCancelAdd={handleCancel}
+            />
+          )}
+          <Dialog
+            open={taskToDelete !== null}
+            onOpenChange={open => {
+              if (!open) setTaskToDelete(null);
+            }}
+            onConfirm={confirmDeleteTask}
+            title={`Delete ${taskToDelete?.title}?`}
+            description="This task will be permanently removed."
           />
-        )}
-        <Dialog
-          open={taskToDelete !== null}
-          onOpenChange={open => {
-            if (!open) setTaskToDelete(null);
-          }}
-          onConfirm={() => {
-            if (taskToDelete) {
-              deleteTask.mutate({ id: taskToDelete.id });
-              setTaskToDelete(null);
-            }
-          }}
-          title={`Delete ${taskToDelete?.title}?`}
-          description="This task will be permanently removed."
-        />
-
-        {adding ? (
-          <TaskForm
-            initialTask={{ project_id: selectedProjectId ?? inboxProjectId ?? undefined }}
-            onSubmit={handleSubmitTask}
-            onCancel={handleCancel}
-            submitLabel="Save Task"
-            projects={projects ?? []}
-          />
-        ) : (
-          <button
-            onClick={() => setAdding(true)}
-            className="mt-6 bg-blue-600 text-white px-4 py-2 rounded"
-          >
-            ➕ Add task
-          </button>
-        )}
+        </div>
       </div>
     </main>
   );

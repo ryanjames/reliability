@@ -30,6 +30,7 @@ app.get('/api/tasks', c => {
       priority: row[5] as 1 | 2 | 3,
       due_date: row[6] as number | null,
       sort_order: row[7] as number,
+      complete: row[8] as boolean,
     }));
 
     return c.json(tasks);

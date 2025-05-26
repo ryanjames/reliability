@@ -3,6 +3,7 @@ import { useAddTask } from '@hooks/useAddTask';
 import { useUpdateTask } from '@hooks/useUpdateTask';
 import type { TTask } from '@types';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export function useTaskHandlers(
   userId: number,
@@ -33,6 +34,7 @@ export function useTaskHandlers(
         { id: editingTask.id, ...payload },
         {
           onSuccess: () => {
+            toast.success(`Task "${payload.title}" updated`);
             setEditingTask(null);
           },
         },
@@ -40,29 +42,64 @@ export function useTaskHandlers(
     } else {
       addTask.mutate(payload, {
         onSuccess: () => {
+          toast.success(`Task "${payload.title}" created`);
           setEditingTask(null);
-          options?.setAdding?.(false); // ✅ Close the form
+          options?.setAdding?.(false);
         },
       });
     }
   };
 
   const handleReorderTask = (task: Pick<TTask, 'id' | 'sort_order'>) => {
-    updateTask.mutate(task);
+    updateTask.mutate(task, {
+      onSuccess: () => {
+        toast.success('Task order updated');
+      },
+    });
   };
 
   const handleDeleteTask = (task: TTask) => {
     setTaskToDelete(task);
   };
 
+  const confirmDeleteTask = () => {
+    if (!taskToDelete) return;
+
+    deleteTask.mutate(
+      { id: taskToDelete.id },
+      {
+        onSuccess: () => {
+          toast.success(`Task "${taskToDelete.title}" deleted`);
+          setTaskToDelete(null);
+        },
+      },
+    );
+  };
+
+  const handleToggleComplete = (task: TTask, complete: boolean) => {
+    updateTask.mutate(
+      {
+        id: task.id,
+        complete,
+      },
+      {
+        onSuccess: () => {
+          toast.success(`Task "${task.title}" marked as ${complete ? 'complete' : 'incomplete'}`);
+        },
+      },
+    );
+  };
+
   return {
     handleSubmitTask,
     handleReorderTask,
     handleDeleteTask,
+    confirmDeleteTask,
     editingTask,
     setEditingTask,
     taskToDelete,
     setTaskToDelete,
-    deleteTask,
+    deleteTask, // optional now, for more direct access if needed
+    handleToggleComplete,
   };
 }

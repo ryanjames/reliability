@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import db from '../db';
 import { persistDb } from '../utils/persistDb';
-import { toast } from 'sonner';
 
 export const projectRoutes = new Hono();
 
@@ -63,7 +62,6 @@ projectRoutes.post('/projects', async c => {
   stmt.step();
   stmt.free();
 
-  toast.success(`Project "${title}" created`);
   persistDb();
 
   return c.json({ success: true });
@@ -82,7 +80,6 @@ projectRoutes.put('/projects/:id', async c => {
   stmt.step();
   stmt.free();
 
-  toast.success(`Project "${title}" updated`);
   persistDb();
 
   return c.json({ success: true });
@@ -114,6 +111,5 @@ projectRoutes.delete('/projects/:id', c => {
 
   persistDb();
 
-  // Respond with the deleted title so you can toast it on the client
   return c.json({ success: true, title });
 });
