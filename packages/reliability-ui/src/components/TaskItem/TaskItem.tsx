@@ -30,13 +30,12 @@ const TaskItem = ({
         onCancelEdit?.();
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onCancelEdit]);
 
   return (
-    <div className="flex justify-between items-start gap-4">
+    <div className="group flex justify-between items-start gap-4">
       <div className="flex items-start gap-3">
         <input
           type="checkbox"
@@ -53,7 +52,7 @@ const TaskItem = ({
         </div>
       </div>
       {!complete && (
-        <div className="space-x-2">
+        <div className="space-x-2 opacity-0 group-hover:opacity-100 transition">
           <EditDelete onEdit={onEdit} onDelete={onDelete} />
         </div>
       )}

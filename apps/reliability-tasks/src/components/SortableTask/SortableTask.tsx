@@ -1,4 +1,3 @@
-// components/SortableTask.tsx
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { TTask } from '@types';
@@ -18,15 +17,15 @@ const SortableTask = ({ task, children }: Props) => {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="group">
+    <div ref={setNodeRef} style={style} className="group flex gap-2 items-start">
       <div
         {...attributes}
         {...listeners}
-        className="cursor-move text-gray-400 p-0 group-hover:text-gray-600 select-none"
+        className="opacity-0 group-hover:opacity-100 cursor-move text-gray-400 group-hover:text-gray-600 select-none transition"
       >
         ⠿
       </div>
-      <div>{children}</div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 };
