@@ -1,5 +1,16 @@
+import { cn } from '../../utils/cn';
+import { cva } from 'class-variance-authority';
 import type { TProject } from '../../../types/project';
 import EditDelete from '../EditDelete';
+
+const projectTitleVariants = cva('flex-1 text-sm cursor-pointer font-semibold', {
+  variants: {
+    isInbox: {
+      true: 'ml-3 pl-1.5',
+      false: '',
+    },
+  },
+});
 
 interface ProjectItemProps {
   project: TProject;
@@ -18,8 +29,11 @@ const ProjectItem = ({
   isInbox = false,
 }: ProjectItemProps) => {
   return (
-    <div className="flex justify-between">
-      <span className="flex-1 text-sm cursor-pointer" onClick={() => onSelectProject(project.id)}>
+    <div className="flex justify-between group flex-1">
+      <span
+        className={cn(projectTitleVariants({ isInbox }))}
+        onClick={() => onSelectProject(project.id)}
+      >
         {project.title}
       </span>
 

@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import SubmitCancel from '../SubmitCancel';
+import Input from '../Input';
 
 interface ProjectFormProps {
   initialTitle?: string;
@@ -7,12 +9,7 @@ interface ProjectFormProps {
   submitLabel?: string;
 }
 
-export default function ProjectForm({
-  initialTitle = '',
-  onSubmit,
-  onCancel,
-  submitLabel = 'Save',
-}: ProjectFormProps) {
+export default function ProjectForm({ initialTitle = '', onSubmit, onCancel }: ProjectFormProps) {
   const [title, setTitle] = useState(initialTitle);
 
   useEffect(() => {
@@ -26,25 +23,25 @@ export default function ProjectForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2 items-center w-full">
-      <input
+      <Input
         type="text"
         value={title}
         onChange={e => setTitle(e.target.value)}
+        display="inline"
         onKeyDown={e => {
           if (e.key === 'Enter') {
             e.preventDefault();
             handleSubmit();
           }
         }}
-        className="border px-2 py-1 w-full"
         autoFocus
       />
-      <button type="submit" className="bg-green-600 text-white px-3 py-1 rounded">
-        {submitLabel}
-      </button>
-      <button type="button" onClick={onCancel} className="text-gray-600 px-3 py-1">
-        Cancel
-      </button>
+      <SubmitCancel
+        initialTitle={initialTitle}
+        title={title}
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+      />
     </form>
   );
 }

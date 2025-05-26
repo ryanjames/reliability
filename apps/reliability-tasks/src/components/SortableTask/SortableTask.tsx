@@ -18,11 +18,11 @@ const SortableTask = ({ task, children }: Props) => {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="group bg-white p-2 rounded shadow">
+    <div ref={setNodeRef} style={style} className="group">
       <div
         {...attributes}
         {...listeners}
-        className="cursor-move text-gray-400 group-hover:text-gray-600 select-none"
+        className="cursor-move text-gray-400 p-0 group-hover:text-gray-600 select-none"
       >
         ⠿
       </div>

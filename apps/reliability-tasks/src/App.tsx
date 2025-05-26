@@ -45,10 +45,9 @@ export default function App() {
 
   return (
     <main className="flex">
-      <div className="w-xs p-4 relative">
-        <h1 className="text-2xl font-bold">Reliability Tasks</h1>
+      <div className="w-xs relative pt-5">
         <ProjectsList onSelectProject={handleSelectProject} selectedProjectId={selectedProjectId} />
-        <div className="absolute bottom-0 p-4 box-border flex w-full left-0">
+        <div className="absolute bottom-0 p-5 box-border flex w-full left-0">
           <div className="flex flex-col flex-1 text-xs align-bottom">
             <span>{user.name}</span>
             <span>{user.email}</span>
