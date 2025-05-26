@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import EditDelete from '../EditDelete';
+import Checkbox from '../Checkbox';
 
 interface TaskProps {
   title: string;
@@ -36,11 +37,10 @@ const TaskItem = ({
 
   return (
     <div className="group flex justify-between items-start gap-4">
-      <div className="flex items-start gap-3">
-        <input
-          type="checkbox"
+      <div className="flex items-start gap-2">
+        <Checkbox
           checked={complete}
-          onChange={e => onToggleComplete(e.target.checked)}
+          onCheckedChange={checked => onToggleComplete(Boolean(checked))}
           className="mt-1 cursor-pointer"
         />
         <div className={complete ? 'opacity-50 line-through' : ''}>
