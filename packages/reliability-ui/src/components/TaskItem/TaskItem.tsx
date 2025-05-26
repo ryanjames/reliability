@@ -5,7 +5,7 @@ import Checkbox from '../Checkbox';
 interface TaskProps {
   title: string;
   description: string | undefined;
-  priority: number;
+  priority?: 1 | 2 | 3;
   dueDate?: string;
   complete: boolean;
   onToggleComplete: (checked: boolean) => void;
@@ -41,13 +41,14 @@ const TaskItem = ({
         <Checkbox
           checked={complete}
           onCheckedChange={checked => onToggleComplete(Boolean(checked))}
-          className="mt-1 cursor-pointer"
+          priority={priority}
+          className={`mt-1 cursor-pointer`}
         />
         <div className={complete ? 'opacity-50 line-through' : ''}>
           <div className="text-sm font-semibold">{title}</div>
           <div className="text-sm text-gray-600">{description}</div>
-          <div className="text-xs text-gray-500">
-            Priority: {priority} | Due: {dueDate ?? 'None'}
+          <div className="text-xs text-gray-500 flex items-center gap-2">
+            <span>Due: {dueDate ?? 'None'}</span>
           </div>
         </div>
       </div>

@@ -9,12 +9,11 @@ const checkboxWrapper = cva('relative inline-block');
 
 const checkboxStyles = cva('reliability-ui-checkbox', {
   variants: {
-    intent: {
-      default: '',
+    priority: {
+      1: 'priority-1',
+      2: 'priority-2',
+      3: 'priority-3',
     },
-  },
-  defaultVariants: {
-    intent: 'default',
   },
 });
 
@@ -23,6 +22,7 @@ type CustomCheckboxProps = Omit<RadixCheckboxProps, 'onChange'> &
     className?: string;
     onCheckedChange?: (checked: boolean) => void;
     checked?: boolean;
+    priority?: 1 | 2 | 3;
   };
 
 const CheckIcon = () => (
@@ -40,7 +40,7 @@ const CheckIcon = () => (
 
 const Checkbox = ({
   className,
-  intent,
+  priority,
   checked,
   onCheckedChange,
   ...props
@@ -52,19 +52,29 @@ const Checkbox = ({
           {...props}
           checked={checked}
           onCheckedChange={onCheckedChange}
-          className={cn(checkboxStyles({ intent }), className)}
+          className={cn(checkboxStyles({ priority }), className)}
         />
         {Boolean(checked) && <CheckIcon />}
       </div>
       <style
         dangerouslySetInnerHTML={{
           __html: `
-              .reliability-ui-checkbox::before{
-                background: transparent;
-                border: 1px solid var(--color-gray-500);
-                box-shadow: none;
-              }
-            `,
+            .reliability-ui-checkbox::before {
+              background: transparent;
+              box-shadow: none;
+              border-width: 1px;
+              border-style: solid;
+            }
+            .priority-1.reliability-ui-checkbox::before {
+              border-color: var(--color-gray-400);
+            }
+            .priority-2.reliability-ui-checkbox::before {
+              border-color: var(--color-yellow-500);
+            }
+            .priority-3.reliability-ui-checkbox::before {
+              border-color: var(--color-red-500);
+            }
+          `,
         }}
       />
     </>
