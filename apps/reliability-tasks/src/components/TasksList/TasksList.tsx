@@ -1,5 +1,6 @@
 import type { TTask } from '@types';
 import type { TProject } from '@reliability-ui';
+import { AddAction } from '@reliability-ui';
 import { useState } from 'react';
 import {
   DndContext,
@@ -82,7 +83,9 @@ export default function TaskList({
   return (
     <>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">{selectedProject?.title ?? 'Unnamed Project'}</h2>
+        <h2 className="pl-4.5 text-xl font-semibold">
+          {selectedProject?.title ?? 'Unnamed Project'}
+        </h2>
         {completedTasks.length > 0 && (
           <button onClick={handleToggleCompleted} className="text-sm text-blue-600 hover:underline">
             {showCompleted ? 'Hide Completed' : 'Show Completed'}
@@ -132,16 +135,13 @@ export default function TaskList({
           projects={projects}
         />
       ) : (
-        <button
-          onClick={() => setAdding(true)}
-          className="mt-6 bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          ➕ Add task
-        </button>
+        <div className="mt-6 ml-4.5">
+          <AddAction label="Add Task" onClick={() => setAdding(true)} className="ml-5 mt-2" />
+        </div>
       )}
 
       {showCompleted && completedTasks.length > 0 && (
-        <div className="mt-8 pt-4 border-t border-gray-200">
+        <div className="mt-8 ml-4.5 pt-4 border-t border-gray-200">
           <h3 className="text-sm font-semibold text-gray-500 mb-2">Completed</h3>
           <div className="space-y-2">
             {completedTasks.map(task => (

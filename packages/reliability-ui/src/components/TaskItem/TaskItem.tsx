@@ -44,7 +44,7 @@ const TaskItem = ({
           className="mt-1 cursor-pointer"
         />
         <div className={complete ? 'opacity-50 line-through' : ''}>
-          <div className="font-semibold">{title}</div>
+          <div className="text-sm font-semibold">{title}</div>
           <div className="text-sm text-gray-600">{description}</div>
           <div className="text-xs text-gray-500">
             Priority: {priority} | Due: {dueDate ?? 'None'}
