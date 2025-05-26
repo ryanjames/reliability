@@ -1,3 +1,5 @@
+import EditDelete from '../EditDelete';
+
 interface TaskProps {
   title: string;
   description: string | undefined;
@@ -7,14 +9,7 @@ interface TaskProps {
   onDelete?: () => void;
 }
 
-export default function Task({
-  title,
-  description,
-  priority,
-  dueDate,
-  onEdit,
-  onDelete,
-}: TaskProps) {
+const TaskItem = ({ title, description, priority, dueDate, onEdit, onDelete }: TaskProps) => {
   return (
     <div className="flex justify-between items-start">
       <div>
@@ -25,17 +20,10 @@ export default function Task({
         </div>
       </div>
       <div className="space-x-2">
-        {onEdit && (
-          <button onClick={onEdit} className="text-sm text-blue-600">
-            Edit
-          </button>
-        )}
-        {onDelete && (
-          <button onClick={onDelete} className="text-sm text-red-500">
-            Delete
-          </button>
-        )}
+        <EditDelete onEdit={onEdit} onDelete={onDelete} />
       </div>
     </div>
   );
-}
+};
+
+export default TaskItem;

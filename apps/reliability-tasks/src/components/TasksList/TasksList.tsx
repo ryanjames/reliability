@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import SortableTask from '../SortableTask';
-import { Task, TaskForm } from '@reliability-ui';
+import { TaskItem, TaskForm } from '@reliability-ui';
 
 interface TaskListProps {
   tasks: TTask[];
@@ -68,7 +68,7 @@ export default function TaskList({
                 projects={projects}
               />
             ) : (
-              <Task
+              <TaskItem
                 title={task.title}
                 description={task.description}
                 priority={task.priority}
