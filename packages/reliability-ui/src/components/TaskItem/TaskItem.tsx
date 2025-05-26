@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import EditDelete from '../EditDelete';
 
 interface TaskProps {
@@ -9,6 +10,7 @@ interface TaskProps {
   onToggleComplete: (checked: boolean) => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  onCancelEdit?: () => void;
 }
 
 const TaskItem = ({
@@ -20,7 +22,19 @@ const TaskItem = ({
   onToggleComplete,
   onEdit,
   onDelete,
+  onCancelEdit,
 }: TaskProps) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onCancelEdit?.();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onCancelEdit]);
+
   return (
     <div className="flex justify-between items-start gap-4">
       <div className="flex items-start gap-3">

@@ -115,6 +115,7 @@ export default function TaskList({
                   onToggleComplete={checked => onToggleComplete(task, checked)}
                   onEdit={() => onEditTask(task)}
                   onDelete={() => onDeleteTask(task)}
+                  onCancelEdit={() => onEditTask(null)}
                 />
               )}
             </SortableTask>
@@ -154,6 +155,7 @@ export default function TaskList({
                 onToggleComplete={checked => onToggleComplete(task, checked)}
                 onEdit={() => onEditTask(task)}
                 onDelete={() => onDeleteTask(task)}
+                onCancelEdit={() => onEditTask(null)}
               />
             ))}
           </div>
