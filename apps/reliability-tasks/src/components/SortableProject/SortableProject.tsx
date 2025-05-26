@@ -20,7 +20,7 @@ const SortableProject = ({ id, children }: Props) => {
       <div
         {...attributes}
         {...listeners}
-        className="cursor-move w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity select-none"
+        className="cursor-move w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity select-none pb-1"
       >
         ⠿
       </div>
