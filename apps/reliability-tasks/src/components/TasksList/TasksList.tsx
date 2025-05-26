@@ -8,6 +8,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
   type DragEndEvent,
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
@@ -48,6 +49,8 @@ export default function TaskList({
   const SHOW_COMPLETED_TOGGLE_KEY = 'showCompletedTasks';
 
   const sensors = useSensors(useSensor(PointerSensor));
+
+  const [activeTask, setActiveTask] = useState<TTask | null>(null);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -92,11 +95,40 @@ export default function TaskList({
           </button>
         )}
       </div>
-      {/* Active Tasks */}
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={event => {
+          const task = activeTasks.find(t => t.id === event.active.id);
+          if (task) setActiveTask(task);
+        }}
+        onDragEnd={event => {
+          handleDragEnd(event);
+          setActiveTask(null);
+        }}
+        onDragCancel={() => setActiveTask(null)}
+      >
+        <DragOverlay>
+          {activeTask && (
+            <div className="w-full">
+              <TaskItem
+                title={activeTask.title}
+                description={activeTask.description}
+                priority={activeTask.priority}
+                dueDate={
+                  activeTask.due_date
+                    ? new Date(activeTask.due_date).toLocaleDateString()
+                    : undefined
+                }
+                complete={activeTask.complete}
+                onToggleComplete={() => {}}
+              />
+            </div>
+          )}
+        </DragOverlay>
         <SortableContext items={activeTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
           {activeTasks.map(task => (
-            <SortableTask key={task.id} task={task}>
+            <SortableTask key={task.id} task={task} activeTaskId={activeTask?.id ?? null}>
               {editingTask?.id === task.id ? (
                 <TaskForm
                   initialTask={{

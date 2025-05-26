@@ -36,7 +36,7 @@ const TaskItem = ({
   }, [onCancelEdit]);
 
   return (
-    <div className="group flex justify-between items-start gap-4">
+    <div className="group flex justify-between items-start gap-4 pb-4 border-b border-gray-200">
       <div className="flex items-start gap-2">
         <Checkbox
           checked={complete}
