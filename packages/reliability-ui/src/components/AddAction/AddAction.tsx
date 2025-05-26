@@ -1,6 +1,3 @@
-// components/Add.tsx
-import React from 'react';
-
 interface AddActionProps {
   label: string;
   onClick: () => void;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '../../utils/cn'; // adjust this import path to your project's utilities
+import { cn } from '../../utils/cn';
 
 const datePickerVariants = cva(
   'reliability-datepicker border-1 border-gray-400 rounded p-1.5 font-sans',

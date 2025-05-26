@@ -1,4 +1,3 @@
-// server/utils/persist.ts
 import { writeFileSync } from 'fs';
 import db from '../db';
 

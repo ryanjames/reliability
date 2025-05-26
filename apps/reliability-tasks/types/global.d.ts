@@ -1,4 +1,3 @@
-// types/global.d.ts
 import type { useAuthStore } from '@store/useAuthStore';
 
 declare global {
