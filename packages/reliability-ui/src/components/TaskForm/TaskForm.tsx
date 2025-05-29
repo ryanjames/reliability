@@ -52,10 +52,8 @@ export default function TaskForm({
     setDescription(initialTask.description ?? '');
     setPriority(initialTask.priority ?? 1);
 
-    if (initialTask.due_date) {
-      const date = new Date(initialTask.due_date);
-      const utcMidnight = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-      setDueDate(utcMidnight);
+    if (typeof initialTask.due_date === 'number') {
+      setDueDate(initialTask.due_date);
     } else {
       setDueDate('');
     }
