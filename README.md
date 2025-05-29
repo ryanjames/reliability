@@ -1,3 +1,6 @@
+
+![reliability-tasks-screenshot](https://github.com/user-attachments/assets/2a9e753b-7f33-44cf-b2c9-31bc03fdeb10)
+
 # Reliability Monorepo
 
 This monorepo hosts the Reliability Tasks app as well as the Reliability UI component library. Built using tools such as Vite, React, TypeScript, Tailwind CSS, Radix UI, and TanStack Query.
