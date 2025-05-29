@@ -238,7 +238,7 @@ const ProjectsList = ({ onSelectProject, selectedProjectId }: ProjectsProps) => 
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
         onConfirm={confirmDelete}
-        title={`Delete ${projectToDelete?.title}?`}
+        title={`Delete "${projectToDelete?.title}"?`}
         description="This project will be permanently removed."
       />
     </>

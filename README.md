@@ -90,7 +90,7 @@ The main frontend application. Features:
 - [x] **Fix update/add task form auto-close**  
        The current add/update task form stays open when launching another form.
 
-- [ ] **Style modal**  
+- [x] **Style modal**  
        Improve the visual appearance of the task editing modal.
 
 - [ ] **Fill out stories for components in library**  

@@ -91,7 +91,7 @@ export default function App() {
               if (!open) setTaskToDelete(null);
             }}
             onConfirm={confirmDeleteTask}
-            title={`Delete ${taskToDelete?.title}?`}
+            title={`Delete "${taskToDelete?.title}"?`}
             description="This task will be permanently removed."
           />
         </div>
