@@ -87,7 +87,7 @@ The main frontend application. Features:
 - [x] **Style sign in/register**  
        Improve visual appearance of the sign in/register view.
 
-- [ ] **Fix update/add task form auto-close**  
+- [x] **Fix update/add task form auto-close**  
        The current add/update task form stays open when launching another form.
 
 - [ ] **Style modal**  

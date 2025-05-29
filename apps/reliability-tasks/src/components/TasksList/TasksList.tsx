@@ -153,7 +153,10 @@ export default function TaskList({
                   dueDate={task.due_date ? new Date(task.due_date).toLocaleDateString() : undefined}
                   complete={task.complete}
                   onToggleComplete={checked => onToggleComplete(task, checked)}
-                  onEdit={() => onEditTask(task)}
+                  onEdit={() => {
+                    setAdding(false);
+                    onEditTask(task);
+                  }}
                   onDelete={() => onDeleteTask(task)}
                   onCancelEdit={() => onEditTask(null)}
                 />
@@ -173,7 +176,14 @@ export default function TaskList({
         />
       ) : (
         <div className="mt-6">
-          <AddAction label="Add Task" onClick={() => setAdding(true)} className="ml-5 mt-2" />
+          <AddAction
+            label="Add Task"
+            onClick={() => {
+              onEditTask(null);
+              setAdding(true);
+            }}
+            className="ml-5 mt-2"
+          />
         </div>
       )}
 
