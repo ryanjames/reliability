@@ -93,5 +93,5 @@ The main frontend application. Features:
 - [x] **Style modal**  
        Improve the visual appearance of the task editing modal.
 
-- [ ] **Fill out stories for components in library**  
+- [x] **Fill out stories for components in library**  
        There are two components with rudimentary stories in Storybook: Button and Toast. Stories need to be written for the rest of the components.

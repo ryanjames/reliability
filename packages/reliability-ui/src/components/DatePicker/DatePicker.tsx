@@ -16,7 +16,7 @@ const datePickerVariants = cva(
   },
 );
 
-interface DatePickerFieldProps extends VariantProps<typeof datePickerVariants> {
+interface DatePickerProps extends VariantProps<typeof datePickerVariants> {
   value?: Date;
   onChange?: (date: Date) => void;
   placeholder?: string;
@@ -30,12 +30,7 @@ const formatDate = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-const DatePickerField: React.FC<DatePickerFieldProps> = ({
-  value,
-  onChange,
-  className = '',
-  size,
-}) => {
+const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, className = '', size }) => {
   return (
     <input
       type="date"
@@ -52,4 +47,4 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
   );
 };
 
-export default DatePickerField;
+export default DatePicker;

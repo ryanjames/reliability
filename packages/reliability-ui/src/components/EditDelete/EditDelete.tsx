@@ -11,7 +11,11 @@ const EditDelete: React.FC<EditDeletesProps> = ({ onEdit, onDelete, className = 
   return (
     <div className={`flex gap-2 ${className}`}>
       {onEdit && (
-        <span onClick={onEdit} className="opacity-40 hover:opacity-100 cursor-pointer">
+        <span
+          onClick={onEdit}
+          role="button"
+          className="opacity-40 hover:opacity-100 cursor-pointer"
+        >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <g clipPath="url(#clip0_1_3)">
               <path
@@ -37,7 +41,11 @@ const EditDelete: React.FC<EditDeletesProps> = ({ onEdit, onDelete, className = 
         </span>
       )}
       {onDelete && (
-        <span onClick={onDelete} className="opacity-40 hover:opacity-100 cursor-pointer">
+        <span
+          onClick={onDelete}
+          role="button"
+          className="opacity-40 hover:opacity-100 cursor-pointer"
+        >
           <svg
             width="16"
             height="16"
