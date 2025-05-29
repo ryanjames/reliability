@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { TextField } from '@radix-ui/themes';
 import type { TextField as RadixTextFieldNS } from '@radix-ui/themes';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -21,22 +22,30 @@ type CustomTextFieldProps = RadixTextFieldNS.RootProps &
     className?: string;
   };
 
-const CustomTextField = ({ display, className, ...props }: CustomTextFieldProps) => {
-  return (
-    <>
-      <TextField.Root {...props} className={cn(textFieldVariants({ display }), className)} />
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            .reliability-input-inline input {
-              text-indent: 1px;
-              font-weight: 600;
-            }
-          `,
-        }}
-      />
-    </>
-  );
-};
+const CustomTextField = forwardRef<HTMLInputElement, CustomTextFieldProps>(
+  ({ display, className, ...props }, ref) => {
+    return (
+      <>
+        <TextField.Root
+          {...props}
+          ref={ref}
+          className={cn(textFieldVariants({ display }), className)}
+        />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              .reliability-input-inline input {
+                text-indent: 1px;
+                font-weight: 600;
+              }
+            `,
+          }}
+        />
+      </>
+    );
+  },
+);
+
+CustomTextField.displayName = 'CustomTextField';
 
 export default CustomTextField;

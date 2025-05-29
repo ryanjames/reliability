@@ -81,10 +81,10 @@ The main frontend application. Features:
 
 ## 📝 TODO
 
-- [ ] **Fix date selection day offset**  
+- [x] **Fix date selection day offset**  
        The date picker appears one day behind due to timezone inconsistencies when reopening.
 
-- [ ] **Style sign in/register**  
+- [x] **Style sign in/register**  
        Improve visual appearance of the sign in/register view.
 
 - [ ] **Fix update/add task form auto-close**  
