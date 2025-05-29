@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import type { TTask } from '@types';
 import type { TProject } from '@reliability-ui';
 import { AddAction } from '@reliability-ui';
@@ -82,6 +83,20 @@ export default function TaskList({
     setShowCompleted(next);
     localStorage.setItem(SHOW_COMPLETED_TOGGLE_KEY, String(next));
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (editingTask) onEditTask(null);
+        if (adding) onCancelAdd();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [editingTask, adding, onEditTask, onCancelAdd]);
 
   return (
     <>
