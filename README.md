@@ -1,4 +1,3 @@
-
 ![reliability-tasks-screenshot](https://github.com/user-attachments/assets/2a9e753b-7f33-44cf-b2c9-31bc03fdeb10)
 
 # Reliability Monorepo
@@ -84,6 +83,28 @@ The main frontend application. Features:
 
 ## 📝 TODO
 
+- [ ] **Move schema out of reliability-tasks/server/db.ts**
+
+- [ ] **More thorough commenting**
+
+- [ ] **Auto-sort imports**  
+       via eslint-plugin-simple-import-sort
+
+- [ ] **TasksList props**  
+       TaskList has a lot of props. Could have hoisted or consolidated some of these into e.g. a params object.
+
+- [ ] **More scalable db structure**  
+       Eventually migrate the db structure so that there is a per-user table.
+
+- [ ] **Better svg handling**  
+       Svg.tsx: I usually build a component that directly parses .svg files stored in some sort of /assets folder so that they can be more easily updated (direct Figma export workflow) and to avoid a lot of inline svgs. I don’t particularly like the pattern of just creating React components for each svg.
+
+- [ ] **@reliability-ui package**  
+       Eventually publish reliability-ui as an npm package so that we can version it.
+
+- [ ] **Unit tests**  
+       Tests in Storybook are just basically scaffolded. Would add more interactions.
+
 - [x] **Fix date selection day offset**  
        The date picker appears one day behind due to timezone inconsistencies when reopening.
 
@@ -98,3 +119,6 @@ The main frontend application. Features:
 
 - [x] **Fill out stories for components in library**  
        There are two components with rudimentary stories in Storybook: Button and Toast. Stories need to be written for the rest of the components.
+
+- [x] **TProject imports**  
+       Noticed on 6/1 that type TProject was moved from local definition in reliability-tasks to reliability-ui. Need to update a few paths, and I'm not immediately sure why eslint didn't sniff this out.
