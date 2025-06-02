@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { TProject } from '@types';
+import type { TProject } from '@reliability-ui';
 
 export function useUpdateProject() {
   const queryClient = useQueryClient();

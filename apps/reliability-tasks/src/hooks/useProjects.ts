@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { TProject } from '@types';
+import type { TProject } from '@reliability-ui';
 
 export function useProjects(userId: number, options?: { enabled?: boolean }) {
   return useQuery<TProject[]>({
